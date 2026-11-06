@@ -328,8 +328,8 @@ const wishShare = () => {
   const u = new URL("/", location.href);
   u.searchParams.set("wish", w);
   if (f) u.searchParams.set("from", f);
-  // Sent from the sender's own chat, so first person; their name already shows in the link preview and on arrival.
-  return { url: u.href, text: `Happy Diwali! 🪔 I wrote “${w}” in fireworks for you. Open it with sound on 🔊` };
+  // Sent from the sender's own chat, so first person and no wish text: it should be a surprise in the sky.
+  return { url: u.href, text: "Happy Diwali! 🪔 I wrote you a wish in fireworks. Open it with sound on 🔊" };
 };
 const syncWa = () => {
   const bad = (i, max) => i.value.trim() && !cleanWish(i.value, max) ? "Links, emails and phone numbers can't go in the sky." : "";

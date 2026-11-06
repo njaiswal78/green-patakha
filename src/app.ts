@@ -91,11 +91,11 @@ export function createApp(platform: (c: C) => Platform) {
     if (!res.ok) return res;
     // Share previews need an absolute og:image; play.html stays plain static for any host.
     let body = (await res.text()).replace('content="/og.png"', `content="${c.var.p.origin}/og.png"`);
-    // WhatsApp and friends show og:title, so a shared wish previews as the wish itself.
+    // WhatsApp and friends show og:title. Only the sender is named; the wish stays a surprise until it bursts in the sky.
     const wish = cleanWish(c.req.query("wish"));
     if (wish) {
       const from = cleanWish(c.req.query("from"), 20);
-      const title = esc(`“${wish}”, a Diwali wish${from ? ` from ${from}` : ""}`);
+      const title = esc(from ? `${from} sent you a Diwali wish 🎆` : "A Diwali wish for you 🎆");
       body = body
         .replace("<title>Burst crackers now · Green Patakha</title>", `<title>${title}</title>`)
         .replace('property="og:title" content="Burst crackers now · Green Patakha"', `property="og:title" content="${title}"`)
