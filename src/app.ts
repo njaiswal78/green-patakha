@@ -91,10 +91,10 @@ export function createApp(platform: (c: C) => Platform) {
     if (!res.ok) return res;
     // Share previews need an absolute og:image; play.html stays plain static for any host.
     let body = (await res.text()).replace('content="/og.png"', `content="${c.var.p.origin}/og.png"`);
-    // WhatsApp and friends show og:title. Only the sender is named; the wish stays a surprise until it bursts in the sky.
-    const wish = cleanWish(c.req.query("wish"));
-    if (wish) {
-      const from = cleanWish(c.req.query("from"), 20);
+    // WhatsApp and friends show og:title. Only the sender is named: the wish itself is sealed in the URL fragment,
+    // which never reaches the server, and stays a surprise until it bursts in the sky. ?wish= is the old plain-text link.
+    const from = cleanWish(c.req.query("from"), 20);
+    if (from || cleanWish(c.req.query("wish"))) {
       const title = esc(from ? `${from} sent you a Diwali wish 🎆` : "A Diwali wish for you 🎆");
       body = body
         .replace("<title>Burst crackers now · Green Patakha</title>", `<title>${title}</title>`)

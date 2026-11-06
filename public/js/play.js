@@ -1,4 +1,5 @@
 import { CRACKERS, LOUDNESS_LABEL, cleanWish } from "./catalog.js";
+import { openWish, sealWish } from "./seal.js";
 import { Sound } from "./audio.js";
 import { Show } from "./show.js";
 
@@ -42,7 +43,8 @@ function onFire(id) {
 
 const GREETINGS = ["Happy Diwali", "शुभ दीपावली", "Happy Diwali", "दीपावली मुबारक", "Shubh Deepavali", "Aur phodo!", "Roshan raho"];
 const MILESTONES = new Set([10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]);
-let wish = cleanWish(new URLSearchParams(location.search).get("wish"));
+// Old links carried the wish in plain text as ?wish=; new ones seal it in the fragment.
+let wish = cleanWish(new URLSearchParams(location.search).get("wish")) || cleanWish(await openWish(new URLSearchParams(location.hash.slice(1)).get("w")));
 let lastSay = -1e9;
 function say(text, force = false) {
   const now = performance.now();
@@ -322,26 +324,36 @@ const wishInput = $("#wish");
 const fromInput = $("#wishfrom");
 const shareBtn = $("#wishshare");
 const waLink = $("#wishwa");
-const wishShare = () => {
-  const w = cleanWish(wishInput.value) || "Happy Diwali";
-  const f = cleanWish(fromInput.value, 20);
-  const u = new URL("/", location.href);
-  u.searchParams.set("wish", w);
-  if (f) u.searchParams.set("from", f);
-  // Sent from the sender's own chat, so first person and no wish text: it should be a surprise in the sky.
-  return { url: u.href, text: "Happy Diwali! 🪔 I wrote you a wish in fireworks. Open it with sound on 🔊" };
-};
-const syncWa = () => {
+// Sent from the sender's own chat, so first person and no wish text: it should be a surprise in the sky.
+const WISH_TEXT = "Happy Diwali! 🪔 I wrote you a wish in fireworks. Open it with sound on 🔊";
+// Sealed ahead of time on every edit: share sheets only open from a tap, so the link must be ready synchronously.
+let shareUrl = location.origin + "/";
+let sealing = 0;
+let sealed = 0;
+const wishShare = () => ({ url: shareUrl, text: WISH_TEXT });
+const syncWa = async () => {
   const bad = (i, max) => i.value.trim() && !cleanWish(i.value, max) ? "Links, emails and phone numbers can't go in the sky." : "";
   wishInput.setCustomValidity(bad(wishInput, 24));
   fromInput.setCustomValidity(bad(fromInput, 20));
-  const s = wishShare();
-  waLink.href = `https://wa.me/?text=${encodeURIComponent(`${s.text} ${s.url}`)}`;
   try { localStorage.setItem("gp.from", fromInput.value.trim()); } catch {}
+  const n = ++sealing;
+  const w = cleanWish(wishInput.value) || "Happy Diwali";
+  const f = cleanWish(fromInput.value, 20);
+  const u = new URL("/", location.href);
+  if (f) u.searchParams.set("from", f);
+  try {
+    u.hash = `w=${await sealWish(w)}`;
+  } catch {
+    u.searchParams.set("wish", w); // no Web Crypto (plain http on a LAN self-host): fall back to the readable link
+  }
+  if (n !== sealing) return;
+  sealed = n;
+  shareUrl = u.href;
+  waLink.href = `https://wa.me/?text=${encodeURIComponent(`${WISH_TEXT} ${shareUrl}`)}`;
 };
 wishInput.addEventListener("input", syncWa);
 fromInput.addEventListener("input", syncWa);
-const shareable = () => [wishInput, fromInput].every((i) => i.reportValidity());
+const shareable = () => [wishInput, fromInput].every((i) => i.reportValidity()) && sealed === sealing;
 waLink.addEventListener("click", (e) => shareable() || e.preventDefault());
 $("#wishbtn").addEventListener("click", () => {
   wishInput.value = wish;
@@ -356,9 +368,9 @@ wishBox.addEventListener("close", () => {
   if (wishBox.returnValue !== "fire" || !w) return;
   wish = w;
   const q = new URLSearchParams(location.search);
-  q.set("wish", wish);
+  q.delete("wish");
   q.delete("from");
-  history.replaceState(null, "", `?${q}`);
+  sealWish(w).then((s) => history.replaceState(null, "", `${q.size ? `?${q}` : location.pathname}#w=${s}`), () => {});
   sound.unlock();
   hint.classList.add("gone");
   say(wish, true);
