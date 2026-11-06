@@ -369,7 +369,7 @@ function openWishBox() {
   wishInput.value = wish;
   try { fromInput.value = localStorage.getItem("gp.from") || ""; } catch {}
   wishBox.returnValue = "";
-  shareBtn.textContent = "Share link";
+  shareBtn.textContent = "Other apps";
   syncWa();
   wishBox.showModal();
 }
