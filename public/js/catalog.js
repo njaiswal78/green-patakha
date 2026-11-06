@@ -165,7 +165,19 @@ export const LOUDNESS_LABEL = ["Gentle", "Medium", "Loud", "Very loud"];
  * shown on our domain in a WhatsApp preview borrows our trust. ponytail: pattern filter, not moderation;
  * a determined troll can still write rude words, which is why wishes are never stored or listed anywhere.
  */
-export function cleanWish(s, max = 24) {
+export function cleanWish(s, max = 80) {
   const w = String(s || "").replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069]/g, "").trim().slice(0, max);
   return /https?:|www\.|@|\.(com|in|net|org|co|io|ly|xyz|me|app|link|top|site|info)\b/i.test(w) || (w.match(/\d/g) || []).length >= 5 ? "" : w;
+}
+
+/** Splits a wish into sky bursts of at most `width` characters (word-wrapped), so each line stays big enough to read on a phone. */
+export function wishLines(text, width = 22) {
+  const lines = [];
+  for (let word of String(text).split(/\s+/).filter(Boolean)) {
+    while (word.length > width) lines.push(word.slice(0, width)), (word = word.slice(width));
+    const last = lines.length - 1;
+    if (last >= 0 && lines[last].length + 1 + word.length <= width) lines[last] += " " + word;
+    else lines.push(word);
+  }
+  return lines;
 }

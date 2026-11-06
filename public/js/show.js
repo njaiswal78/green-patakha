@@ -417,8 +417,9 @@ export class Show {
     return o;
   }
 
-  spawn(p) {
-    if (this.particles.length >= this.maxParticles * this.power) return null;
+  /** `force` skips the particle cap; only for sky text, which is bounded (~1400) and must not lose letters. */
+  spawn(p, force = false) {
+    if (!force && this.particles.length >= this.maxParticles * this.power) return null;
     const o = this.pool.pop() || {};
     o.kind = "spark";
     o.x = 0; o.y = 0; o.vx = 0; o.vy = 0;
@@ -571,7 +572,7 @@ export class Show {
       const d = 3;
       for (const [px, py] of pts) {
         this.spawn({ kind: "star", x: c.x, y: c.y, vx: px * d, vy: py * d, g: 0.02, drag: d, life: rand(2.8, 3.4), size: 2.6 * u,
-          hue: hue + rand(-8, 8), sat: 100, light: 66, trail: 0.5, split: Math.random() < 0.25 ? 2 : 0, splitAt: 0.12 });
+          hue: hue + rand(-8, 8), sat: 100, light: 66, trail: 0.5, split: Math.random() < 0.25 ? 2 : 0, splitAt: 0.12 }, true);
       }
     };
     this.items.push(c);

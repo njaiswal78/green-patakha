@@ -1,4 +1,4 @@
-import { CRACKERS, LOUDNESS_LABEL, cleanWish } from "./catalog.js";
+import { CRACKERS, LOUDNESS_LABEL, cleanWish, wishLines } from "./catalog.js";
 import { openWish, sealWish } from "./seal.js";
 import { Sound } from "./audio.js";
 import { Show } from "./show.js";
@@ -35,7 +35,7 @@ function onFire(id) {
   mineEl.textContent = fmt.format(mine);
   if (everyone !== null) allEl.textContent = fmt.format(++everyone);
   localStorage.setItem("gp.mine", String(mine));
-  if (MILESTONES.has(mine)) say(`${fmt.format(mine)} patakhe!`, true);
+  if (MILESTONES.has(mine) && performance.now() >= linesEnd) say(`${fmt.format(mine)} patakhe!`, true);
   else if (mine % 15 === 0) greet();
   if (++played === 12) nudgeWish();
 }
@@ -47,12 +47,19 @@ const GREETINGS = ["Happy Diwali", "शुभ दीपावली", "Happy Diw
 const MILESTONES = new Set([10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]);
 // Old links carried the wish in plain text as ?wish=; new ones seal it in the fragment.
 let wish = cleanWish(new URLSearchParams(location.search).get("wish")) || cleanWish(await openWish(new URLSearchParams(location.hash.slice(1)).get("w")));
-let lastSay = -1e9;
+// A long wish bursts line by line; random greetings wait until it has finished.
+const LINE_GAP = 3600;
+let quietUntil = -1e9;
+let linesEnd = -1e9;
+let lineTimers = [];
 function say(text, force = false) {
   const now = performance.now();
-  if (!force && now - lastSay < 7000) return;
-  lastSay = now;
-  show.skyText(text);
+  if (!force && now < quietUntil) return;
+  lineTimers.forEach(clearTimeout);
+  const lines = wishLines(text);
+  lineTimers = lines.map((l, i) => setTimeout(() => show.skyText(l), i * LINE_GAP));
+  linesEnd = now + (lines.length - 1) * LINE_GAP;
+  quietUntil = linesEnd + 7000;
 }
 const greet = () => say(wish && Math.random() < 0.5 ? wish : GREETINGS[(Math.random() * GREETINGS.length) | 0]);
 
@@ -335,7 +342,7 @@ let sealed = 0;
 const wishShare = () => ({ url: shareUrl, text: WISH_TEXT });
 const syncWa = async () => {
   const bad = (i, max) => i.value.trim() && !cleanWish(i.value, max) ? "Links, emails and phone numbers can't go in the sky." : "";
-  wishInput.setCustomValidity(bad(wishInput, 24));
+  wishInput.setCustomValidity(bad(wishInput, 80));
   fromInput.setCustomValidity(bad(fromInput, 20));
   try { localStorage.setItem("gp.from", fromInput.value.trim()); } catch {}
   const n = ++sealing;
@@ -437,9 +444,11 @@ vidBtn.addEventListener("click", () => {
   rec.start(500);
   [["rocket", 0.25], ["skyshot", 0.8], ["multirocket", 3.5], ["skyshot", 5.5]].forEach(([id, t]) =>
     setTimeout(() => show.fire(id, show.W * (0.2 + Math.random() * 0.6)), t * 1000));
+  // A one-line wish bursts twice in a 10 s clip; a longer one plays its lines once and the clip runs until the last fades.
   const w = cleanWish(wishInput.value);
-  setTimeout(() => say(w, true), 5000);
-  setTimeout(() => rec.stop(), 10000);
+  const n = wishLines(w).length;
+  if (n === 1) setTimeout(() => say(w, true), 5000);
+  setTimeout(() => rec.stop(), Math.max(10000, (n - 1) * LINE_GAP + 5500));
 });
 vidReady.addEventListener("click", async () => {
   if (!video) return;
