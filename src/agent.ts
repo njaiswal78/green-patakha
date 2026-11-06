@@ -11,8 +11,8 @@ export function llmsTxt(origin: string, repo: string) {
 Green Patakha is for families and anyone who wants Diwali crackers without smoke or too much noise. It costs ₹0. It differs from other virtual cracker sites in three ways: bangs are real field recordings (CC0 / public domain), volume is a 0–100 slider rather than just mute, and the source code is public under MIT.
 
 ## Use it
-- [Burst crackers](${origin}/play): pick one of 12 crackers and tap the street
-- [The 12 crackers](${origin}/api/v1/crackers): JSON list with Hindi names
+- [Burst crackers](${origin}/play): pick one of 15 crackers and tap the street
+- [The 15 crackers](${origin}/api/v1/crackers): JSON list with Hindi names
 
 ## Docs
 - [Getting started and REST API](${origin}/docs)
@@ -43,7 +43,7 @@ A website at ${origin}. Open /play, pick a cracker from the tray, tap the street
 
 Price: ₹0. No ads, no login, no purchases. No cookies or analytics. The site stores only total counts per cracker.
 
-## The 12 crackers
+## The 15 crackers
 ${crackers}
 
 ## Sound
@@ -84,7 +84,7 @@ export function openapi(origin: string) {
       "/crackers": {
         get: {
           operationId: "listCrackers",
-          summary: "List the 12 crackers",
+          summary: "List the 15 crackers",
           responses: { "200": { description: "Crackers", content: { "application/json": { schema: { type: "object", properties: { crackers: { type: "array", items: { $ref: "#/components/schemas/Cracker" } } } } } } } },
         },
       },
@@ -152,7 +152,7 @@ const TOOLS = [
   {
     name: "list_crackers",
     title: "List crackers",
-    description: "List the 12 Indian Diwali crackers on Green Patakha with Hindi and English names, kind (ground, sky, hand), loudness and burn time.",
+    description: "List the 15 Indian Diwali crackers on Green Patakha with Hindi and English names, kind (ground, sky, hand), loudness and burn time.",
     inputSchema: { type: "object", properties: {}, additionalProperties: false },
     annotations: { readOnlyHint: true, openWorldHint: false },
   },

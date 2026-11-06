@@ -6,7 +6,7 @@ const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
 
 const SCALE = {
   phuljhadi: 1.25, anar: 1, chakri: 1, pencil: 1.15, bijli: 0.8, sutli: 0.9, hydrogen: 1.05,
-  ladi: 1, rocket: 1.15, skyshot: 1.05, saanp: 0.75, tikli: 0.9,
+  ladi: 1, rocket: 1.15, skyshot: 1.05, saanp: 0.75, tikli: 0.9, bullet: 0.65, multirocket: 1.15,
 };
 
 const PAPER = {
@@ -14,6 +14,7 @@ const PAPER = {
   sutli: ["#b98f4f", "#8a6a3a", "#d4b483", "#d62828"],
   hydrogen: ["#1f9d55", "#0b4f2a", "#ffd166", "#d62828"],
   ladi: ["#d62828", "#ef233c", "#9d0208", "#f4d58d"],
+  bullet: ["#d62828", "#9d0208", "#fcbf49", "#f4d58d"],
 };
 
 class Item {
@@ -166,7 +167,7 @@ class Anar extends Item {
       return;
     }
     if (!this.hiss) {
-      this.hiss = this.sound.hiss({ gain: 0.3, low: 900, high: 7500, dur: this.dur, attack: 0.5, release: 1.4, flutter: 0.3 });
+      this.hiss = this.sound.hiss({ gain: 0.1, low: 900, high: 7500, dur: this.dur, attack: 0.5, release: 1.4, flutter: 0.3 });
     }
     let e = bt < 0.6 ? bt / 0.6 : bt > this.dur - 1.6 ? Math.max(0, (this.dur - bt) / 1.6) : 1;
     e *= 0.85 + 0.15 * Math.sin(bt * 31) * Math.sin(bt * 17);
@@ -232,7 +233,7 @@ class Chakri extends Item {
       return;
     }
     if (!this.hiss) {
-      this.hiss = this.sound.hiss({ gain: 0.26, low: 1500, high: 5000, dur: this.dur, attack: 0.3, release: 0.8, flutter: 0.55 });
+      this.hiss = this.sound.hiss({ gain: 0.1, low: 1500, high: 5000, dur: this.dur, attack: 0.3, release: 0.8, flutter: 0.55 });
     }
     const e = bt < 0.8 ? bt / 0.8 : bt > this.dur - 1 ? Math.max(0.1, this.dur - bt) : 1;
     this.spin = 30 * e;
@@ -350,27 +351,28 @@ class Phuljhadi extends Item {
       return;
     }
     if (!this.hiss) {
-      this.hiss = this.sound.hiss({ gain: 0.07, low: 3000, high: 9500, dur: this.dur, attack: 0.15, release: 0.6, flutter: 0.9 });
+      this.hiss = this.sound.hiss({ gain: 0.035, low: 3000, high: 9500, dur: this.dur, attack: 0.15, release: 0.6, flutter: 0.9 });
     }
     const u = this.u;
     const [bx, by] = this.ends(this.burnFrac);
     const floor = Math.max(this.y + 4 * u, this.show.groundY + 16 * u);
-    this.acc += 170 * dt;
+    // A real sparkler: a tiny white-hot bead throwing fast, short, thin sparks that fork.
+    this.acc += 140 * dt;
     while (this.acc >= 1) {
       this.acc -= 1;
       const a = rand(0, TAU);
-      const v = rand(50, 290) * u;
+      const v = rand(110, 340) * u;
       this.show.emit({
-        x: bx, y: by, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: 0.35, drag: 3.2, life: rand(0.12, 0.42),
-        size: rand(0.7, 1.3) * u, hue: 45, sat: rand(25, 100), light: 66, trail: 0.7,
-        split: Math.random() < 0.45 ? 3 : 0, splitAt: rand(0.3, 0.6), floor,
+        x: bx, y: by, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: 0.3, drag: 4.5, life: rand(0.07, 0.26),
+        size: rand(0.5, 0.95) * u, hue: rand(38, 50), sat: rand(20, 75), light: 74, trail: 0.9,
+        split: Math.random() < 0.6 ? 3 : 0, splitAt: rand(0.35, 0.65), floor,
       });
     }
-    this.show.flash(bx, by, 80 * u, 0.95, 45, 0.05);
+    this.show.flash(bx, by, rand(26, 40) * u, rand(0.35, 0.6), 45, 0.05);
     this.crackT -= dt;
     if (this.crackT <= 0) {
       this.crackT = rand(0.25, 0.45);
-      this.sound.crackle({ gain: 0.14, pan: this.pan, dur: 0.3, count: 9 });
+      this.sound.crackle({ gain: 0.07, pan: this.pan, dur: 0.3, count: 9 });
     }
   }
 
@@ -430,7 +432,7 @@ class Pencil extends Phuljhadi {
       return;
     }
     if (!this.hiss) {
-      this.hiss = this.sound.hiss({ gain: 0.12, low: 500, high: 3200, dur: this.dur, attack: 0.3, release: 0.8, flutter: 0.4 });
+      this.hiss = this.sound.hiss({ gain: 0.025, low: 500, high: 3200, dur: this.dur, attack: 0.3, release: 0.8, flutter: 0.4 });
     }
     const u = this.u;
     const [bx, by] = this.ends(this.burnFrac);
@@ -443,7 +445,7 @@ class Pencil extends Phuljhadi {
         this.show.emit({ x: bx, y: by, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: 0.4, drag: 2.5, life: rand(0.2, 0.5), size: 1.1 * u, hue: this.hue, sat: 90, light: 70, floor: this.show.groundY + 16 * u });
       }
     }
-    this.show.flash(bx, by - 10 * u, 160 * u, 0.85, this.hue, 0.05);
+    this.show.flash(bx, by - 10 * u, rand(60, 80) * u, rand(0.4, 0.55), this.hue, 0.05);
     this.smokeT -= dt;
     if (this.smokeT <= 0) {
       this.smokeT = 0.16;
@@ -477,8 +479,8 @@ class Ladi extends Item {
   constructor(...a) {
     super(...a);
     const u = this.u;
-    const n = 90;
-    const half = Math.min(140 * u, this.show.W * 0.35);
+    const n = this.def.id === "ladi100" ? 30 : 90;
+    const half = Math.min((n / 90) * 140 * u, this.show.W * 0.35);
     this.bits = [];
     let t = 1.0;
     for (let i = n - 1; i >= 0; i--) {
@@ -593,7 +595,7 @@ class Rocket extends Item {
       [this.rx, this.ry] = this.pt(60, 10);
       this.vx = rand(-70, 70) * u0;
       this.vy = launchHeight(show, this.ry);
-      this.sound.whoosh({ gain: 0.42, pan: this.pan, dur: Math.abs(this.vy) / (520 * u0) + 0.1, whistle: Math.random() < 0.45 });
+      this.sound.whoosh({ gain: 0.3, pan: this.pan, dur: Math.abs(this.vy) / (520 * u0) + 0.1, whistle: Math.random() < 0.45 });
       this.puff(this.x, this.y - this.h * 0.6, { r: 8, grow: 50, alpha: 0.35, vy: -20 });
       show.flash(this.rx, this.ry, 60 * this.u, 0.8, 40, 0.1);
     }
@@ -647,6 +649,38 @@ class Rocket extends Item {
       ctx.stroke();
       ctx.restore();
     }
+  }
+}
+
+/** A rack of ordinary rockets on one chain fuse, each lit a beat after the last. */
+class MultiRocket extends Item {
+  constructor(show, def, x, y) {
+    super(show, def, x, y);
+    const d = { ...def, id: "rocket" };
+    this.rockets = [];
+    for (let i = 0; i < 7; i++) {
+      const r = new Rocket(show, d, x + (i - 3) * this.w * 0.26, y);
+      r.h *= 0.7;
+      r.w *= 0.7;
+      r.fuse = 1.3 + i * 0.5 + rand(-0.12, 0.12);
+      r.startFuse = () => {};
+      this.rockets.push(r);
+    }
+  }
+
+  update(dt) {
+    this.t += dt;
+    if (!this.started) {
+      this.started = true;
+      this.startFuse(this.rockets[this.rockets.length - 1].fuse);
+    }
+    for (const r of this.rockets) if (!r.dead) r.update(dt);
+    if (!this.finished && this.rockets.every((r) => r.finished)) this.finish(18);
+    this.tickDeath();
+  }
+
+  draw(ctx) {
+    for (const r of this.rockets) if (!r.dead) r.draw(ctx);
   }
 }
 
@@ -727,7 +761,7 @@ class Saanp extends Item {
       this.tickDeath();
       return;
     }
-    if (!this.hiss) this.hiss = this.sound.hiss({ gain: 0.05, low: 400, high: 2500, dur: this.dur, attack: 0.3, release: 1, flutter: 0.6 });
+    if (!this.hiss) this.hiss = this.sound.hiss({ gain: 0.03, low: 400, high: 2500, dur: this.dur, attack: 0.3, release: 1, flutter: 0.6 });
     const prog = bt / this.dur;
     const speed = 15 * u * (1 - prog * 0.5);
     this.head += (Math.sin(bt * 2.1 + this.seed) * 1.7 + rand(-1, 1)) * dt;
@@ -812,7 +846,7 @@ class Tikli extends Item {
         this.show.emit({ x: mx, y: my, vx: -rand(80, 320) * u, vy: rand(-90, 40) * u, g: 0.4, drag: 5, life: rand(0.06, 0.18), size: 1 * u, hue: 46, light: 62, floor: this.y });
       }
       this.puff(mx, my, { r: 4, grow: 26, alpha: 0.38, vy: -25, life: 2.2 });
-      this.sound.sample("bang", { gain: 0.32, rate: rand(1.9, 2.4), pan: this.pan });
+      this.sound.sample("bang", { gain: 0.15, rate: rand(1.9, 2.4), pan: this.pan });
       this.sound.crackle({ gain: 0.25, pan: this.pan, dur: 0.03, count: 3 });
     }
     if (this.caps === 0 && !this.finished) this.finish(12);
@@ -830,8 +864,15 @@ const BOMBS = {
   bijli: {
     fuse: 1.3, power: 0.55, tip: [62, 34], body: 70,
     boom(s, pan) {
-      s.sample("bang", { gain: 0.85, rate: rand(1.02, 1.2), pan });
+      s.sample("bang", { gain: 0.55, rate: rand(1.02, 1.2), pan });
       s.sample("bang", { gain: 0.1, rate: 1, pan: -pan * 0.5, delay: 0.17 });
+    },
+  },
+  bullet: {
+    fuse: 1.6, power: 0.8, tip: [60, 40], body: 58,
+    boom(s, pan) {
+      s.sample("bang", { gain: 0.85, rate: rand(0.9, 1), pan });
+      s.thump({ gain: 0.4, pan, freq: 90, dur: 0.3 });
     },
   },
   sutli: {
@@ -859,8 +900,9 @@ export function makeItem(def, show, x, y) {
     case "chakri": return new Chakri(show, def, x, y);
     case "phuljhadi": return new Phuljhadi(show, def, x, y);
     case "pencil": return new Pencil(show, def, x, y);
-    case "ladi": return new Ladi(show, def, x, y);
+    case "ladi": case "ladi100": return new Ladi(show, def, x, y);
     case "rocket": return new Rocket(show, def, x, y);
+    case "multirocket": return new MultiRocket(show, def, x, y);
     case "skyshot": return new SkyShot(show, def, x, y);
     case "saanp": return new Saanp(show, def, x, y);
     case "tikli": return new Tikli(show, def, x, y);

@@ -4,7 +4,7 @@ import { esc, page } from "./layout";
 export function comparePage(origin: string, repo: string) {
   const rows: [string, string, (c: (typeof COMPETITORS)[number]) => string][] = [
     ["Price", "Free. No ads, no purchase.", (c) => c.price],
-    ["Crackers", "12, all unlocked", (c) => c.crackers],
+    ["Crackers", "15, all unlocked", (c) => c.crackers],
     ["Sound", "Real recorded bangs (CC0 and public-domain field recordings), shaped noise for hiss and whoosh", (c) => c.sound],
     ["Volume", "Slider 0 to 100, remembered, plus mute", (c) => c.volume],
     ["How you fire", "Pick any cracker, tap anywhere, as often as you like", (c) => c.freedom],
@@ -21,7 +21,7 @@ export function comparePage(origin: string, repo: string) {
   <div class="wrap">
     <p class="eyebrow">Compare</p>
     <h1>Virtual Diwali crackers, compared.</h1>
-    <p class="lead">Green Patakha is a free, open-source website where you burst 12 Indian crackers with real recorded sound and your own volume. Below is how it stacks up against four other browser cracker sites, using only what each site says about itself.</p>
+    <p class="lead">Green Patakha is a free, open-source website where you burst 15 Indian crackers with real recorded sound and your own volume. Below is how it stacks up against four other browser cracker sites, using only what each site says about itself.</p>
     <p class="muted"><b>Scenario:</b> one family, one phone, Diwali night, wanting to burst crackers without smoke, with someone at home who'd rather it wasn't too loud.</p>
     <div class="cmp-wrap" style="margin-top:24px">
       <table class="cmp">

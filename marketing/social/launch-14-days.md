@@ -31,7 +31,7 @@ Post only after `{SITE}/play` works on the production URL. None of these are sch
 
 The legal limit for one Indian firecracker is 125 dB(AI) at 4 metres.
 
-I built a cracker shop where the limit is a slider you control. 12 patakhe, real recorded bangs, 0 grams of smoke, ₹0.
+I built a cracker shop where the limit is a slider you control. 15 patakhe, real recorded bangs, 0 grams of smoke, ₹0.
 
 {SITE}/?utm_source=x&utm_medium=social&utm_campaign=launch
 
@@ -60,7 +60,7 @@ Mine cut 14 single bangs out of CC0 field recordings, then pitch and pan each bl
 
 ## Day 3 · X / Instagram / Shorts caption
 
-Happy Diwali. 12 patakhe, real sound, 0 grams of smoke. Turn it up.
+Happy Diwali. 15 patakhe, real sound, 0 grams of smoke. Turn it up.
 
 {SITE}/play?utm_source=instagram&utm_medium=social&utm_campaign=launch
 
@@ -102,7 +102,7 @@ Delhi banned laris in 2025. This one is one tap.
 
 Green Patakha is MIT licensed. Fork it, add your city's favourite cracker, run it on your own server.
 
-One file lists all 12 crackers; the browser and the server both read it.
+One file lists all 15 crackers; the browser and the server both read it.
 
 https://github.com/njaiswal78/green-patakha?utm_source=x&utm_medium=social&utm_campaign=launch
 
@@ -144,7 +144,7 @@ docker compose up -d
 
 Title: I built a Diwali cracker site with real recorded sound and open-sourced it
 
-Body: 12 Indian crackers (phuljhadi to hydrogen bomb) on a canvas, with bangs cut from CC0 field recordings and a volume slider. No login, no ads. Stack is vanilla JS + Web Audio in the browser, Hono on one Cloudflare Worker with D1 for a shared counter, and a Node + SQLite path for Docker. Happy to answer questions about the particle or audio side.
+Body: 15 Indian crackers (phuljhadi to hydrogen bomb) on a canvas, with bangs cut from CC0 field recordings and a volume slider. No login, no ads. Stack is vanilla JS + Web Audio in the browser, Hono on one Cloudflare Worker with D1 for a shared counter, and a Node + SQLite path for Docker. Happy to answer questions about the particle or audio side.
 
 Play: {SITE}/play?utm_source=reddit&utm_medium=social&utm_campaign=launch
 Code: https://github.com/njaiswal78/green-patakha

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140">
+  <defs>
+    <linearGradient id="tube" x1="0" x2="1"><stop offset="0" stop-color="#7a0f0f"/><stop offset=".5" stop-color="#f94144"/><stop offset="1" stop-color="#6a0d0d"/></linearGradient>
+    <linearGradient id="box" x1="0" x2="1"><stop offset="0" stop-color="#1d4e89"/><stop offset=".5" stop-color="#3a7bd5"/><stop offset="1" stop-color="#163d6b"/></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="134" rx="44" ry="5" fill="#000" opacity=".35"/>
+  <g stroke="#c8a165" stroke-width="2.4"><path d="M24 62 v40 M42 54 v48 M60 48 v54 M78 54 v48 M96 62 v40"/></g>
+  <g>
+    <rect x="19" y="38" width="10" height="26" rx="2" fill="url(#tube)"/><path d="M19 38 L24 27 L29 38 Z" fill="#ffd166"/>
+    <rect x="37" y="30" width="10" height="26" rx="2" fill="url(#tube)"/><path d="M37 30 L42 19 L47 30 Z" fill="#ffd166"/>
+    <rect x="55" y="24" width="10" height="26" rx="2" fill="url(#tube)"/><path d="M55 24 L60 13 L65 24 Z" fill="#ffd166"/>
+    <rect x="73" y="30" width="10" height="26" rx="2" fill="url(#tube)"/><path d="M73 30 L78 19 L83 30 Z" fill="#ffd166"/>
+    <rect x="91" y="38" width="10" height="26" rx="2" fill="url(#tube)"/><path d="M91 38 L96 27 L101 38 Z" fill="#ffd166"/>
+  </g>
+  <rect x="14" y="96" width="92" height="36" rx="3" fill="url(#box)" stroke="#0e2a4d" stroke-width="1.2"/>
+  <rect x="14" y="96" width="92" height="6" fill="#ffd166"/>
+  <text x="60" y="122" font-family="Noto Sans Devanagari, Kohinoor Devanagari, Mangal, Nirmala UI, sans-serif" font-size="11" font-weight="800" fill="#ffd166" text-anchor="middle">&#x930;&#x949;&#x915;&#x947;&#x91F; x7</text>
+</svg>

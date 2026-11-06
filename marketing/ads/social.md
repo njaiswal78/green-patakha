@@ -11,9 +11,9 @@ Creative: the 30-second video in ../social/video-script.md
 Landing URL: {SITE}/?utm_source=meta&utm_medium=cpc&utm_campaign=launch&utm_content=cold
 
 Primary text:
-A real cracker can legally hit 125 dB(AI). This one goes as loud as you set it. 12 Indian patakhe, real recorded bangs, 0 grams of smoke. Free, no login.
+A real cracker can legally hit 125 dB(AI). This one goes as loud as you set it. 15 Indian patakhe, real recorded bangs, 0 grams of smoke. Free, no login.
 
-Headline: Burst 12 patakhe. 0 g smoke.
+Headline: Burst 15 patakhe. 0 g smoke.
 Button: Play Game
 
 Source line for the number (in the comments or landing page): PIB, Environment (Protection) Rules 1986, Schedule I No. 89.

@@ -7,7 +7,7 @@ const tray = $("#tray");
 const canvas = $("#sky");
 const hint = $("#hint");
 const intro = $("#intro");
-const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="];
+const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "q", "w", "e"];
 
 if ("audioSession" in navigator) {
   // iOS: play through the silent switch, like a video would.
@@ -34,7 +34,23 @@ function onFire(id) {
   mineEl.textContent = fmt.format(mine);
   if (everyone !== null) allEl.textContent = fmt.format(++everyone);
   localStorage.setItem("gp.mine", String(mine));
+  if (MILESTONES.has(mine)) say(`${fmt.format(mine)} patakhe!`, true);
+  else if (mine % 15 === 0) greet();
 }
+
+// ---------- sky messages ----------
+
+const GREETINGS = ["Happy Diwali", "शुभ दीपावली", "Happy Diwali", "दीपावली मुबारक", "Shubh Deepavali", "Aur phodo!", "Roshan raho"];
+const MILESTONES = new Set([10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]);
+let wish = (new URLSearchParams(location.search).get("wish") || "").trim().slice(0, 24);
+let lastSay = -1e9;
+function say(text, force = false) {
+  const now = performance.now();
+  if (!force && now - lastSay < 7000) return;
+  lastSay = now;
+  show.skyText(text);
+}
+const greet = () => say(wish && Math.random() < 0.5 ? wish : GREETINGS[(Math.random() * GREETINGS.length) | 0]);
 
 function flush(beacon = false) {
   if (!Object.keys(pending).length) return;
@@ -83,44 +99,6 @@ const fitTray = () => {
 fitTray();
 new ResizeObserver(fitTray).observe(tray);
 
-// ---------- Sutli Bhai ----------
-
-const mascot = $("#mascot");
-const say = $("#say");
-let bhai = null;
-let poseTimer = 0;
-let sayTimer = 0;
-const restPose = () => (sound.muted ? "sleep" : autoTimer ? "hyped" : "idle");
-function pose(p, ms = 0, line = "") {
-  if (!bhai) return;
-  bhai.setAttribute("data-pose", p);
-  clearTimeout(poseTimer);
-  if (ms) poseTimer = setTimeout(() => bhai.setAttribute("data-pose", restPose()), ms);
-  if (line) {
-    say.textContent = line;
-    say.classList.add("on");
-    clearTimeout(sayTimer);
-    sayTimer = setTimeout(() => say.classList.remove("on"), 1800);
-  }
-}
-fetch("/mascot.svg")
-  .then((r) => (r.ok ? r.text() : Promise.reject()))
-  .then((svg) => {
-    mascot.insertAdjacentHTML("afterbegin", svg);
-    bhai = mascot.querySelector("svg");
-    if (autoTimer) pose("hyped", 0, "Mela shuru!");
-    else if (intro.classList.contains("gone")) pose("wave", 2600, "Diwali mubarak! Chalo phodte hain.");
-  })
-  .catch(() => {});
-
-const playSample = sound.sample.bind(sound);
-sound.sample = (set, o = {}) => {
-  if (set === "boom" && !sound.muted) setTimeout(() => pose("boom", 1100, "Kya awaaz hai!"), (o.delay || 0) * 1000);
-  return playSample(set, o);
-};
-const isLoud = (id) => CRACKERS.find((c) => c.id === id)?.loudness === 3;
-const brace = (id) => isLoud(id) && !sound.muted && pose("ears", 3500, "Kaan band karo!");
-
 const gentleBtn = $("#gentle");
 const savedGentle = localStorage.getItem("gp.gentle");
 if (savedGentle !== null) show.gentle = savedGentle === "1";
@@ -130,6 +108,18 @@ gentleBtn.addEventListener("click", () => {
   gentleBtn.setAttribute("aria-pressed", String(show.gentle));
   localStorage.setItem("gp.gentle", show.gentle ? "1" : "0");
 });
+
+const powerBtn = $("#power");
+function setPower(n) {
+  show.power = n;
+  sound.setPower(n);
+  powerBtn.textContent = `${n}×`;
+  powerBtn.setAttribute("aria-pressed", String(n > 1));
+  localStorage.setItem("gp.power", String(n));
+}
+const cyclePower = () => setPower({ 2: 4, 4: 1 }[show.power] ?? 2);
+setPower([1, 2, 4].includes(Number(localStorage.getItem("gp.power"))) ? Number(localStorage.getItem("gp.power")) : 1);
+powerBtn.addEventListener("click", cyclePower);
 
 // ---------- tray ----------
 
@@ -141,13 +131,13 @@ CRACKERS.forEach((c, i) => {
   b.setAttribute("role", "radio");
   b.title = `${c.name} (${c.english}). ${LOUDNESS_LABEL[c.loudness]}. ${c.about}`;
   const img = document.createElement("img");
-  img.src = `/crackers/${c.id}.svg`;
+  img.src = `/photos/${c.id}.jpg`;
   img.alt = "";
-  img.width = 48;
-  img.height = 56;
+  img.width = 52;
+  img.height = 52;
   const key = document.createElement("span");
   key.className = "key";
-  key.textContent = KEYS[i];
+  key.textContent = KEYS[i]?.toUpperCase() ?? "";
   const hi = document.createElement("span");
   hi.className = "hi";
   hi.textContent = c.hindi;
@@ -167,15 +157,14 @@ CRACKERS.forEach((c, i) => {
   tray.append(b);
 });
 
-function select(id, quiet = false) {
-  if (!quiet && id !== selected && isLoud(id)) pose("hyped", 1400, "Ye wala? Kaan sambhal ke!");
+function select(id) {
   selected = id;
   localStorage.setItem("gp.sel", id);
   for (const b of tray.children) b.setAttribute("aria-checked", String(b.dataset.id === id));
   tray.querySelector(`[data-id="${id}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
   sound.unlock();
 }
-select(selected, true);
+select(selected);
 
 // ---------- firing ----------
 
@@ -196,7 +185,7 @@ canvas.addEventListener("pointerdown", (e) => {
     canvas.setPointerCapture(e.pointerId);
     return;
   }
-  if (show.fire(selected, x, y)) brace(selected);
+  show.fire(selected, x, y);
 });
 canvas.addEventListener("pointermove", (e) => {
   if (!drag) return;
@@ -215,9 +204,10 @@ function fireRandom(id = selected) {
 
 const autoBtn = $("#auto");
 let autoTimer = null;
-const AUTO_POOL = ["anar", "chakri", "rocket", "rocket", "skyshot", "bijli", "sutli", "ladi", "phuljhadi", "pencil", "rocket", "anar", "hydrogen"];
+const AUTO_POOL = ["anar", "chakri", "rocket", "rocket", "skyshot", "bijli", "sutli", "ladi", "phuljhadi", "pencil", "rocket", "anar", "hydrogen", "multirocket", "bullet", "ladi100"];
 function autoTick() {
   fireRandom(AUTO_POOL[(Math.random() * AUTO_POOL.length) | 0]);
+  if (Math.random() < 0.08) greet();
   autoTimer = setTimeout(autoTick, 900 + Math.random() * 1600);
 }
 function toggleAuto() {
@@ -230,13 +220,9 @@ function toggleAuto() {
     autoTick();
   }
   autoBtn.setAttribute("aria-pressed", String(!!autoTimer));
-  pose(restPose(), 0, autoTimer ? "Mela shuru!" : "");
 }
 autoBtn.addEventListener("click", toggleAuto);
-$("#sweep").addEventListener("click", () => {
-  show.sweep();
-  pose("wave", 1500, "Safai bhi zaroori hai.");
-});
+$("#sweep").addEventListener("click", () => show.sweep());
 
 // ---------- volume ----------
 
@@ -245,12 +231,7 @@ const volNum = $("#volnum");
 const muteBtn = $("#mute");
 const SPEAKER_ON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>';
 const SPEAKER_OFF = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
-let wasMuted = sound.muted;
 sound.onChange((s) => {
-  if (s.muted !== wasMuted) {
-    wasMuted = s.muted;
-    pose(restPose(), 0, s.muted ? "Shhh… so raha hoon." : "Jaag gaya!");
-  }
   const v = Math.round(s.volume * 100);
   vol.value = String(v);
   volNum.textContent = s.muted ? "0" : String(v);
@@ -275,9 +256,9 @@ function toggleFull() {
 // ---------- keyboard ----------
 
 addEventListener("keydown", (e) => {
-  if (e.target instanceof HTMLInputElement && e.key !== " ") return;
+  if (e.target instanceof HTMLInputElement && (e.target.type !== "range" || e.key !== " ")) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
-  const i = KEYS.indexOf(e.key);
+  const i = KEYS.indexOf(e.key.toLowerCase());
   if (i >= 0 && CRACKERS[i]) {
     select(CRACKERS[i].id);
     return;
@@ -294,7 +275,6 @@ addEventListener("keydown", (e) => {
     sound.unlock();
     hint.classList.add("gone");
     fireRandom();
-    brace(selected);
   } else if (k === "m") {
     sound.unlock();
     sound.toggleMute();
@@ -302,6 +282,8 @@ addEventListener("keydown", (e) => {
     toggleAuto();
   } else if (k === "f") {
     toggleFull();
+  } else if (k === "p") {
+    cyclePower();
   } else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
     if (e.target === vol) return;
     e.preventDefault();
@@ -313,10 +295,11 @@ addEventListener("keydown", (e) => {
 // ---------- intro ----------
 
 // A silent show runs behind the title screen. It does not count: onFire is swapped out until the visitor enters.
-const DEMO = ["skyshot", "rocket", "rocket", "anar", "chakri", "anar", "phuljhadi", "skyshot", "pencil"];
+const DEMO = ["skyshot", "rocket", "rocket", "anar", "chakri", "anar", "phuljhadi", "skyshot", "pencil", "multirocket"];
 let demoTimer = 0;
 function demoTick() {
   show.fire(DEMO[(Math.random() * DEMO.length) | 0], 60 + Math.random() * (show.W - 120));
+  if (Math.random() < 0.12) say(wish || "Happy Diwali");
   demoTimer = setTimeout(demoTick, 600 + Math.random() * 700);
 }
 function enter() {
@@ -327,13 +310,143 @@ function enter() {
   intro.classList.add("gone");
   hint.classList.remove("gone");
   sound.unlock();
-  pose("wave", 2200, "Chalo! Patakha chuno, sadak pe tap karo.");
+  show.fire("sutli", show.W / 2, show.groundY + (show.H - show.groundY) * 0.45);
+  setTimeout(() => say(wish || "Happy Diwali", true), 3600);
 }
 intro.addEventListener("click", (e) => { if (!e.target.closest("a")) enter(); });
+
+const sender = (new URLSearchParams(location.search).get("from") || "").trim().slice(0, 20);
+
+const wishBox = $("#wishbox");
+const wishInput = $("#wish");
+const fromInput = $("#wishfrom");
+const shareBtn = $("#wishshare");
+const waLink = $("#wishwa");
+const wishShare = () => {
+  const w = wishInput.value.trim().slice(0, 24) || "Happy Diwali";
+  const f = fromInput.value.trim().slice(0, 20);
+  const u = new URL("/", location.href);
+  u.searchParams.set("wish", w);
+  if (f) u.searchParams.set("from", f);
+  return { url: u.href, text: `${f ? f + " sent you" : "Here's"} a Diwali wish in fireworks: “${w}” 🎆 Tap to light it:` };
+};
+const syncWa = () => {
+  const s = wishShare();
+  waLink.href = `https://wa.me/?text=${encodeURIComponent(`${s.text} ${s.url}`)}`;
+  try { localStorage.setItem("gp.from", fromInput.value.trim()); } catch {}
+};
+wishInput.addEventListener("input", syncWa);
+fromInput.addEventListener("input", syncWa);
+$("#wishbtn").addEventListener("click", () => {
+  wishInput.value = wish;
+  try { fromInput.value = localStorage.getItem("gp.from") || ""; } catch {}
+  wishBox.returnValue = "";
+  shareBtn.textContent = "Share link";
+  syncWa();
+  wishBox.showModal();
+});
+wishBox.addEventListener("close", () => {
+  const w = wishInput.value.trim().slice(0, 24);
+  if (wishBox.returnValue !== "fire" || !w) return;
+  wish = w;
+  const q = new URLSearchParams(location.search);
+  q.set("wish", wish);
+  history.replaceState(null, "", `?${q}`);
+  sound.unlock();
+  hint.classList.add("gone");
+  say(wish, true);
+});
+shareBtn.addEventListener("click", async () => {
+  const { url, text } = wishShare();
+  try {
+    if (navigator.share) await navigator.share({ title: "A Diwali wish for you", text, url });
+    else {
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      shareBtn.textContent = "Link copied";
+    }
+  } catch {}
+});
+
+// ---------- status video ----------
+// Records the sky canvas plus the game's own audio, then hands the clip to the share sheet (WhatsApp Status, Stories) or downloads it.
+const vidBtn = $("#wishvideo");
+const vidReady = $("#vidready");
+let video = null;
+if (!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream) vidBtn.hidden = true;
+vidBtn.addEventListener("click", () => {
+  if (!wishInput.value.trim()) return wishInput.reportValidity();
+  if (vidReady.disabled) return;
+  wishBox.close("fire");
+  sound.unlock();
+  const stream = show.canvas.captureStream(30);
+  const dest = sound.ctx.createMediaStreamDestination();
+  sound.master.connect(dest);
+  stream.addTrack(dest.stream.getAudioTracks()[0]);
+  const type = ["video/mp4;codecs=avc1,mp4a.40.2", "video/mp4", "video/webm;codecs=vp9,opus", "video/webm"].find((t) => MediaRecorder.isTypeSupported(t)) || "";
+  const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 5e6 });
+  const chunks = [];
+  rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+  rec.onstop = () => {
+    sound.master.disconnect(dest);
+    stream.getTracks().forEach((t) => t.stop());
+    show.mark = "";
+    const mime = rec.mimeType.split(";")[0] || "video/webm";
+    video = new File(chunks, `diwali-wish.${mime.includes("mp4") ? "mp4" : "webm"}`, { type: mime });
+    vidReady.disabled = false;
+    vidReady.textContent = "📲 Share your Diwali video";
+  };
+  show.mark = `${location.host} · write your own wish in the sky`;
+  vidReady.disabled = true;
+  vidReady.textContent = "🔴 Recording your wish…";
+  vidReady.hidden = false;
+  rec.start(500);
+  [["rocket", 0.25], ["skyshot", 0.8], ["multirocket", 3.5], ["skyshot", 5.5]].forEach(([id, t]) =>
+    setTimeout(() => show.fire(id, show.W * (0.2 + Math.random() * 0.6)), t * 1000));
+  setTimeout(() => rec.stop(), 10000);
+});
+vidReady.addEventListener("click", async () => {
+  if (!video) return;
+  const { text, url } = wishShare();
+  try {
+    if (navigator.canShare?.({ files: [video] })) await navigator.share({ files: [video], text: `${text} ${url}` });
+    else {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(video);
+      a.download = video.name;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    }
+    vidReady.hidden = true;
+    video = null;
+  } catch {}
+});
 
 if (new URLSearchParams(location.search).has("auto")) {
   intro.classList.add("gone");
   toggleAuto();
+} else if (wish) {
+  // Browsers keep audio locked until a gesture, so a shared wish opens straight into a silent show and the first tap brings sound.
+  intro.classList.add("gone");
+  show.onFire = () => {};
+  demoTick();
+  setTimeout(() => say(wish, true), 400);
+  const tap = $("#soundtap");
+  tap.textContent = `🔊 ${sender ? `${sender} sent you a wish. ` : ""}Tap for sound`;
+  tap.hidden = false;
+  const start = (e) => {
+    if (e.type === "keydown" && e.key !== " " && e.key !== "Enter") return;
+    removeEventListener("pointerdown", start, true);
+    removeEventListener("keydown", start, true);
+    tap.hidden = true;
+    clearTimeout(demoTimer);
+    show.onFire = onFire;
+    sound.unlock();
+    say(wish, true);
+    // Let the tap's own click land first, so tapping Auto mela or pressing A doesn't toggle it straight back off.
+    setTimeout(() => { if (!autoTimer) toggleAuto(); }, 400);
+  };
+  addEventListener("pointerdown", start, true);
+  addEventListener("keydown", start, true);
 } else {
   show.onFire = () => {};
   demoTick();

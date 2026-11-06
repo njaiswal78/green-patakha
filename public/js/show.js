@@ -4,10 +4,6 @@ import { makeItem } from "./items.js";
 const TAU = Math.PI * 2;
 const rand = (a, b) => a + Math.random() * (b - a);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-/** Every cracker throws this many times the sparks and light of the base design. */
-const BOOST = 5;
-/** Height and width of every cracker's impact. Scaling launch speed and gravity together draws the same arc, this much bigger, on the same timing. */
-const IMPACT = 2;
 
 /**
  * The night sky, the street, and everything burning on it.
@@ -27,6 +23,8 @@ export class Show {
     this.items = [];
     this.lights = [];
     this.shake = 0;
+    /** User's 1x / 2x / 4x: more sparks, bigger and brighter bursts. */
+    this.power = 1;
     this.time = 0;
     this.wind = rand(-14, 18);
     this.sprites = {};
@@ -110,7 +108,7 @@ export class Show {
     this.unit = clamp(Math.min(H / 820, W / 700), 0.45, 1.4);
     this.groundY = Math.round(H * 0.66);
     // ponytail: fixed cap; slow GPUs drop frames near it. Upgrade path: adapt the cap to measured frame time.
-    this.maxParticles = (W * H < 500000 ? 2600 : 5200) * BOOST;
+    this.maxParticles = W * H < 500000 ? 2600 : 5200;
     this.buildBackground();
     const old = this.litter;
     this.litter = document.createElement("canvas");
@@ -407,21 +405,20 @@ export class Show {
     return null;
   }
 
-  /** Cracker-facing emit: sparks and stars come out BOOST times, with jittered speed and life. */
+  /** Each cracker's own numbers are its real-life scale; power adds jittered copies of sparks and stars. */
   emit(p) {
-    if (p.kind !== "smoke") p = { ...p, vx: (p.vx || 0) * IMPACT, vy: (p.vy || 0) * IMPACT, g: (p.g ?? 1) * IMPACT };
     const o = this.spawn(p);
-    if (o && (o.kind === "spark" || o.kind === "star")) {
-      for (let k = 1; k < BOOST; k++) {
-        const j = rand(0.82, 1.12);
-        this.spawn({ ...p, vx: p.vx * j + rand(-12, 12), vy: p.vy * j + rand(-12, 12), life: o.max * rand(0.8, 1.15) });
+    if (o && this.power > 1 && (o.kind === "spark" || o.kind === "star")) {
+      for (let k = 1; k < this.power; k++) {
+        const j = rand(0.85, 1.15);
+        this.spawn({ ...p, vx: (p.vx || 0) * j + rand(-12, 12), vy: (p.vy || 0) * j + rand(-12, 12), life: o.max * rand(0.8, 1.15) });
       }
     }
     return o;
   }
 
   spawn(p) {
-    if (this.particles.length >= this.maxParticles) return null;
+    if (this.particles.length >= this.maxParticles * this.power) return null;
     const o = this.pool.pop() || {};
     o.kind = "spark";
     o.x = 0; o.y = 0; o.vx = 0; o.vy = 0;
@@ -439,13 +436,15 @@ export class Show {
   }
 
   flash(x, y, r, intensity, hue = 40, life = 0.18) {
-    // BOOST x the lit area; a little extra punch, more would saturate to flat white.
-    const k = this.gentle ? 0.35 : 2;
-    this.lights.push({ x, y, r: r * (this.gentle ? 1 : Math.sqrt(BOOST) * IMPACT), i: intensity * k, hue, life, max: life });
+    // ponytail: life <= 0.05 marks a per-frame glow (sparkler, pencil, fountain); power skips those, since
+    // re-boosting them every frame floods the screen. A cracker with a short one-off flash would need a flag.
+    const p = life > 0.05 ? this.power : 1;
+    this.lights.push({ x, y, r: r * Math.sqrt(p), i: intensity * (this.gentle ? 0.35 : 1) * (1 + (p - 1) / 3), hue, life, max: life });
   }
 
   addShake(v) {
-    if (!this.gentle) this.shake = Math.min(32, this.shake + v * 2);
+    const k = Math.sqrt(this.power);
+    if (!this.gentle) this.shake = Math.min(18 * k, this.shake + v * k);
   }
 
   scorch(x, y, r) {
@@ -498,7 +497,7 @@ export class Show {
     const delay = clamp((this.groundY - y) / this.H, 0.05, 0.6) * 0.45;
 
     this.flash(x, y, 260 * u * size, 0.9 * size, pattern === "willow" ? 40 : hue, 0.3);
-    this.sound?.sample("sky", { gain: 0.75 * size, rate: rand(0.85, 1.1), pan, delay });
+    this.sound?.sample("sky", { gain: 0.5 * size, rate: rand(0.85, 1.1), pan, delay });
     if (size > 1.05) this.sound?.thump({ gain: 0.3, pan, delay, freq: 55, dur: 0.6 });
 
     const star = (vx, vy, h, extra = {}) =>
@@ -544,6 +543,65 @@ export class Show {
     }
     if (pattern === "crackle") this.sound?.crackle({ gain: 0.35 * size, pan, delay: delay + 0.6, dur: 0.9, count: 70 });
     if (pattern === "willow") this.sound?.hiss({ gain: 0.05, low: 4000, high: 9000, dur: 2.6, attack: 0.4, release: 1.5, flutter: 0.7 });
+  }
+
+  /** A shell that whistles up from the street and bursts into glowing letters. */
+  skyText(text, hue = rand(25, 50)) {
+    const pts = this.textPoints(text);
+    if (!pts.length) return;
+    const u = this.unit;
+    const G = 520 * u;
+    const top = Math.max(this.H * 0.26, 90 * u);
+    const c = { x: this.W / 2, y: this.groundY, vy: -Math.sqrt(2 * G * 0.92 * Math.max(60, this.groundY - top)), dead: false, finished: false, acc: 0, draw() {} };
+    this.sound?.whoosh({ gain: 0.25, dur: 1.2, whistle: true });
+    c.update = (dt) => {
+      c.vy += G * 0.92 * dt;
+      c.y += c.vy * dt;
+      c.acc += 120 * dt;
+      while (c.acc >= 1) {
+        c.acc -= 1;
+        this.spawn({ x: c.x, y: c.y, vx: rand(-25, 25) * u, vy: rand(30, 120) * u, g: 0.5, drag: 2, life: rand(0.2, 0.5), size: 1.2 * u, hue: 40, light: 58 });
+      }
+      if (c.vy < -40 * u) return;
+      c.dead = true;
+      this.flash(c.x, c.y, 320 * u, 1, hue, 0.3);
+      this.sound?.sample("sky", { gain: 0.6, rate: rand(0.9, 1), pan: 0 });
+      this.sound?.crackle({ gain: 0.25, delay: 1.6, dur: 1, count: 50 });
+      // With gravity off, a star launched at v under drag d comes to rest v/d away: aim each at its letter pixel.
+      const d = 3;
+      for (const [px, py] of pts) {
+        this.spawn({ kind: "star", x: c.x, y: c.y, vx: px * d, vy: py * d, g: 0.02, drag: d, life: rand(2.8, 3.4), size: 2.6 * u,
+          hue: hue + rand(-8, 8), sat: 100, light: 66, trail: 0.5, split: Math.random() < 0.25 ? 2 : 0, splitAt: 0.12 });
+      }
+    };
+    this.items.push(c);
+  }
+
+  /** Pixel offsets of the text's filled area, centred on (0, 0), at most ~1400 points. */
+  textPoints(text) {
+    const cv = document.createElement("canvas");
+    const g = cv.getContext("2d");
+    const font = (s) => `900 ${s}px "Arial Black", "Noto Sans Devanagari", "Nirmala UI", "Kohinoor Devanagari", sans-serif`;
+    let fs = Math.min(110 * this.unit, this.H * 0.15);
+    g.font = font(fs);
+    fs *= Math.min(1, (this.W * 0.88) / Math.max(1, g.measureText(text).width));
+    g.font = font(fs);
+    cv.width = Math.ceil(g.measureText(text).width) + 8;
+    cv.height = Math.ceil(fs * 1.5);
+    g.font = font(fs);
+    g.textBaseline = "middle";
+    g.fillText(text, 4, cv.height / 2);
+    const data = g.getImageData(0, 0, cv.width, cv.height).data;
+    let step = Math.max(3, Math.round(fs / 22));
+    let pts;
+    do {
+      pts = [];
+      for (let y = 0; y < cv.height; y += step)
+        for (let x = 0; x < cv.width; x += step)
+          if (data[(y * cv.width + x) * 4 + 3] > 128) pts.push([x - cv.width / 2, y - cv.height / 2]);
+      step++;
+    } while (pts.length > 1400);
+    return pts;
   }
 
   // ---------- loop ----------
@@ -720,7 +778,7 @@ export class Show {
       ctx.drawImage(gl, l.x - l.r, l.y - l.r, l.r * 2, l.r * 2);
     }
     if (sky > 0.02) {
-      ctx.globalAlpha = Math.min(this.gentle ? 0.05 : 0.26, sky * 0.06);
+      ctx.globalAlpha = Math.min(this.gentle ? 0.05 : 0.18 + 0.04 * this.power, sky * 0.12);
       ctx.fillStyle = "#ffcf9a";
       ctx.fillRect(-20, -20, W + 40, H + 40);
     }
@@ -758,5 +816,14 @@ export class Show {
       }
     }
     ctx.globalCompositeOperation = "source-over";
+    if (this.mark) {
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+      ctx.font = `700 ${Math.round(15 * this.unit)}px sans-serif`;
+      ctx.fillText(this.mark, W / 2, H - 22 * this.unit);
+      ctx.textAlign = "start";
+      ctx.globalAlpha = 1;
+    }
   }
 }

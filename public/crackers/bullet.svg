@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140">
+  <defs>
+    <linearGradient id="red" x1="0" x2="1"><stop offset="0" stop-color="#7a0f0f"/><stop offset=".45" stop-color="#e5383b"/><stop offset="1" stop-color="#6a0d0d"/></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="134" rx="26" ry="4" fill="#000" opacity=".3"/>
+  <rect x="42" y="58" width="36" height="72" rx="6" fill="url(#red)"/>
+  <ellipse cx="60" cy="59" rx="18" ry="4" fill="#9d0208"/>
+  <rect x="42" y="84" width="36" height="20" fill="#fcbf49"/>
+  <path d="M42 84 h36 M42 104 h36" stroke="#2b9348" stroke-width="2.4"/>
+  <path d="M60 58 q-3 -9 1 -18" stroke="#555" stroke-width="1.8" fill="none"/>
+  <text x="60" y="98" font-family="Noto Sans Devanagari, Kohinoor Devanagari, Mangal, Nirmala UI, sans-serif" font-size="9" font-weight="800" fill="#7a0f0f" text-anchor="middle">&#x92C;&#x941;&#x932;&#x947;&#x91F;</text>
+</svg>

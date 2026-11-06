@@ -35,7 +35,7 @@ One family, one phone, Diwali night, wanting to burst crackers without smoke, wi
 
 1. **Real recorded bangs.** Every bomb, bijli and ladi pop plays a CC0 or public-domain field recording, pitched and panned per blast. Faris Farooq Rah's simulator: "There are no recordings." Source: farisfarooq.com page above.
 2. **A volume slider, not just a mute button.** 0 to 100, remembered on the device. Virtual Diwali: "mute it from the top corner". OXAAM: "use the sound button to switch it off". Sources: their pages above.
-3. **Fire at will, and read the code.** All 12 crackers from the first tap, no boxes to find, no rounds, no paid greeting, MIT source. Virtual Diwali has 16 hidden boxes, OXAAM rounds of 20, ShareMyInvite "One payment". None of the four lists source code.
+3. **Fire at will, and read the code.** All 15 crackers from the first tap, no boxes to find, no rounds, no paid greeting, MIT source. Virtual Diwali has 16 hidden boxes, OXAAM rounds of 20, ShareMyInvite "One payment". None of the four lists source code.
 
 ## Where we are worse
 
@@ -54,8 +54,8 @@ One family, one phone, Diwali night, wanting to burst crackers without smoke, wi
 
 ## Site copy
 
-- Headline: Burst 12 Indian patakhe with real sound. 0 grams of smoke.
+- Headline: Burst 15 Indian patakhe with real sound. 0 grams of smoke.
 - Subhead: Pick a phuljhadi, anar, sutli bomb or 1000 wala ladi and tap the street. The bangs are real recordings, not synthesised beeps, and you set the volume. Free, no login, open source.
 - Button: Start bursting
-- Compare intro: Green Patakha is a free, open-source website where you burst 12 Indian crackers with real recorded sound and your own volume.
+- Compare intro: Green Patakha is a free, open-source website where you burst 15 Indian crackers with real recorded sound and your own volume.
 - FAQ from objections: Is it really free? Are the sounds real? How do I set the volume? Is it OK for pets, babies and people sensitive to flashes? Does it work on my phone? Which crackers are there? Can I host it myself? Do you track me? Can an AI assistant use it?

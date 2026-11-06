@@ -9,8 +9,6 @@ const SETS = {
 };
 
 const STORE_KEY = "gp.sound";
-/** Recorded bangs are stacked this many deep, and the master bus is driven this hard. */
-const BOOST = 5;
 
 export class Sound {
   constructor() {
@@ -19,6 +17,8 @@ export class Sound {
     const saved = readSaved();
     this.volume = saved.volume;
     this.muted = saved.muted;
+    /** User's 1x / 2x / 4x: drives the bus harder and stacks each bang this many deep. */
+    this.power = 1;
     this.listeners = new Set();
   }
 
@@ -32,37 +32,32 @@ export class Sound {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) return;
       this.ctx = new Ctx({ latencyHint: "interactive" });
-      // Loudness chain: drive x5 -> bass shelf -> hard compressor -> makeup -> soft clip -> volume.
-      // The soft clip pins peaks at 0 dBFS, the most any browser can output; actual
-      // SPL is whatever the listener's speaker makes of full scale. Volume sits last
-      // so the slider scales real output instead of feeding the compressor.
+      // Chain: power drive -> bass shelf -> peak limiter -> soft clip -> volume. 1x leaves 6 dB of
+      // headroom so each cracker keeps its real loudness relative to the others (a bomb peaks near
+      // -6 dBFS, a phuljhadi stays a fizz); 2x and 4x spend that headroom and then push into the
+      // limiter. Volume sits last so the slider scales real output.
       const c = this.ctx;
       this.bus = c.createGain();
+      this.bus.gain.value = this.power / 2;
       this.master = c.createGain();
-      const drive = c.createGain();
-      drive.gain.value = BOOST;
       const bass = c.createBiquadFilter();
       bass.type = "lowshelf";
       bass.frequency.value = 110;
-      bass.gain.value = 6;
+      bass.gain.value = 4;
       this.limiter = c.createDynamicsCompressor();
-      this.limiter.threshold.value = -20;
-      this.limiter.knee.value = 4;
+      this.limiter.threshold.value = -6;
+      this.limiter.knee.value = 3;
       this.limiter.ratio.value = 20;
-      this.limiter.attack.value = 0.001;
-      this.limiter.release.value = 0.12;
-      const makeup = c.createGain();
-      makeup.gain.value = 5;
+      this.limiter.attack.value = 0.002;
+      this.limiter.release.value = 0.25;
       const clip = c.createWaveShaper();
       const curve = new Float32Array(2048);
       for (let i = 0; i < curve.length; i++) curve[i] = (0.92 * Math.tanh(2.5 * (i / 1023.5 - 1))) / Math.tanh(2.5); // 0.92: 4x oversampling overshoots
       clip.curve = curve;
       clip.oversample = "4x";
-      this.bus.connect(drive);
-      drive.connect(bass);
+      this.bus.connect(bass);
       bass.connect(this.limiter);
-      this.limiter.connect(makeup);
-      makeup.connect(clip);
+      this.limiter.connect(clip);
       clip.connect(this.master);
       this.master.connect(c.destination);
       this.applyVolume(true);
@@ -85,6 +80,11 @@ export class Sound {
         }
       }),
     );
+  }
+
+  setPower(n) {
+    this.power = n;
+    if (this.bus) this.bus.gain.setTargetAtTime(n / 2, this.ctx.currentTime, 0.03);
   }
 
   setVolume(v) {
@@ -136,9 +136,9 @@ export class Sound {
   sample(set, { gain = 1, rate = 1, pan = 0, delay = 0 } = {}) {
     if (!this.ctx) return;
     const names = SETS[set];
-    for (let k = 0; k < BOOST; k++) {
+    for (let k = 0; k < this.power; k++) {
       const buf = this.buffers[names[(Math.random() * names.length) | 0]];
-      // Layer 0 is the hit itself; the rest thicken it a few ms later, slightly detuned and spread.
+      // Layer 0 is the hit itself; extra power layers thicken it a few ms later, detuned and spread.
       const g = k ? gain * 0.6 : gain;
       const d = delay + (k ? Math.random() * 0.035 : 0);
       const pn = pan + (k ? (Math.random() - 0.5) * 0.5 : 0);

@@ -1,6 +1,6 @@
 # Green Patakha
 
-Burst 12 Indian Diwali crackers in your browser, with real recorded sound, your own volume, and zero smoke.
+Burst 15 Indian Diwali crackers in your browser, with real recorded sound, your own volume, and zero smoke.
 
 Phuljhadi, anar, chakri, bijli, sutli, hydrogen bomb, ladi, rocket, sky shot, saanp goli and more. Tap where you want it, pick the next one, turn the volume down when the baby is asleep.
 
@@ -43,12 +43,14 @@ Everything on `/play` is static files in `public/`. Any static host can serve th
 
 - `public/js/audio.js`: Web Audio. Recorded bangs with random pitch and stereo pan, synthesized fuse hiss, crackle and whistle, a limiter on the master bus. Sky bursts are heard after they're seen.
 - `public/js/show.js`, `public/js/items.js`: Canvas particle engine with drag, gravity, bouncing sparks, glitter that splits, smoke, paper debris that stays on the street until you sweep it.
-- `public/js/catalog.js`: the 12 crackers. The browser and the Worker both read it.
+- `public/js/catalog.js`: the 15 crackers. The browser and the Worker both read it.
 - `src/`: one Hono app for pages, REST (`/api/v1`), MCP and `llms.txt`. `src/worker.ts` runs it on Cloudflare (D1, rate-limit binding, Cache API); `server/node.ts` runs the same app on Node with SQLite.
 
 ## Credits
 
 Sound clips are cut from CC0 and public-domain field recordings on Wikimedia Commons. See [public/sounds/CREDITS.md](public/sounds/CREDITS.md). `scripts/cut-sounds.py` rebuilds them from the originals.
+
+Cracker photos in the tray and on `/about` come from Wikimedia Commons under their own licenses (CC0, PD, CC BY, CC BY-SA), not MIT. See [public/photos/CREDITS.md](public/photos/CREDITS.md).
 
 ## License
 

@@ -46,7 +46,8 @@ export function docsHome(origin: string, repo: string) {
 <p>Green Patakha is a website where you burst Indian Diwali crackers with real recorded sound. Open <a href="/play">/play</a>, pick a cracker, tap the street. There is no account.</p>
 <h2>Keyboard</h2>
 <table class="cmp"><tbody>
-<tr><td><code>1</code> to <code>9</code>, <code>0</code>, <code>-</code>, <code>=</code></td><td>Pick one of the 12 crackers</td></tr>
+<tr><td><code>1</code> to <code>9</code>, <code>0</code>, <code>-</code>, <code>=</code>, <code>Q</code>, <code>W</code>, <code>E</code></td><td>Pick one of the 15 crackers</td></tr>
+<tr><td><code>P</code></td><td>Cycle lights and sound power: 1×, 2×, 4×</td></tr>
 <tr><td><code>Space</code></td><td>Light the picked cracker at a random spot</td></tr>
 <tr><td><code>M</code></td><td>Mute or unmute</td></tr>
 <tr><td><code>↑</code> <code>↓</code></td><td>Volume up or down by 5</td></tr>
@@ -62,7 +63,7 @@ export function docsHome(origin: string, repo: string) {
 <p>Base URL: <code>${origin}/api/v1</code>. JSON in, JSON out. Machine-readable spec: <a href="/api/v1/openapi.json">openapi.json</a>.</p>
 
 <h3>GET /crackers</h3>
-<p>The 12 crackers with id, names (English and Hindi), kind, loudness, burn time and image.</p>
+<p>The 15 crackers with id, names (English and Hindi), kind, loudness, burn time and image.</p>
 <pre>curl ${origin}/api/v1/crackers</pre>
 <pre>{
   "crackers": [
@@ -111,7 +112,7 @@ export function docsMcp(origin: string, repo: string) {
 }</pre>
 <h2>Tools</h2>
 <table class="cmp"><thead><tr><th>Tool</th><th>Input</th><th>Returns</th><th>Same as</th></tr></thead><tbody>
-<tr><td><code>list_crackers</code></td><td>none</td><td>The 12 crackers with Hindi and English names, kind, loudness</td><td><code>GET /api/v1/crackers</code></td></tr>
+<tr><td><code>list_crackers</code></td><td>none</td><td>The 15 crackers with Hindi and English names, kind, loudness</td><td><code>GET /api/v1/crackers</code></td></tr>
 <tr><td><code>get_stats</code></td><td>none</td><td>Total burst so far and the count per cracker</td><td><code>GET /api/v1/stats</code></td></tr>
 </tbody></table>
 <h2>Try it with curl</h2>

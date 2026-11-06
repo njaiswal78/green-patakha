@@ -4,6 +4,7 @@ import { llmsFull, llmsTxt, mcp, openapi } from "./agent";
 import { comparePage } from "./pages/compare";
 import { docsHome, docsMcp, docsSelfHost } from "./pages/docs";
 import { homePage } from "./pages/home";
+import { esc } from "./pages/layout";
 import type { Platform } from "./platform";
 
 type Env = { Variables: { p: Platform } };
@@ -80,7 +81,17 @@ export function createApp(platform: (c: C) => Platform) {
     const res = await c.var.p.fallback(new Request(new URL("/play", c.req.url), c.req.raw));
     if (!res.ok) return res;
     // Share previews need an absolute og:image; play.html stays plain static for any host.
-    const body = (await res.text()).replace('content="/og.png"', `content="${c.var.p.origin}/og.png"`);
+    let body = (await res.text()).replace('content="/og.png"', `content="${c.var.p.origin}/og.png"`);
+    // WhatsApp and friends show og:title, so a shared wish previews as the wish itself.
+    const wish = (c.req.query("wish") || "").trim().slice(0, 24);
+    if (wish) {
+      const from = (c.req.query("from") || "").trim().slice(0, 20);
+      const title = esc(`“${wish}”, a Diwali wish${from ? ` from ${from}` : ""}`);
+      body = body
+        .replace("<title>Burst crackers now · Green Patakha</title>", `<title>${title}</title>`)
+        .replace('property="og:title" content="Burst crackers now · Green Patakha"', `property="og:title" content="${title}"`)
+        .replace(/property="og:description" content="[^"]*"/, 'property="og:description" content="Tap to see it burst in fireworks over your street. Green Patakha, zero smoke."');
+    }
     return c.html(body);
   };
   app.get("/", game);

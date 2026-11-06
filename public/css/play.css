@@ -121,7 +121,7 @@ html, body {
   border-color: #f97316;
   box-shadow: 0 0 0 1px #f97316, 0 0 18px #f9731655;
 }
-.card img { width: 48px; height: 56px; pointer-events: none; }
+.card img { width: 52px; height: 52px; object-fit: cover; border-radius: 10px; margin-bottom: 3px; pointer-events: none; }
 .card .hi { font-size: 13px; font-weight: 700; line-height: 1.2; }
 .card .en { font-size: 11px; color: #c9c3b8; line-height: 1.2; white-space: nowrap; }
 .card .key {
@@ -131,34 +131,6 @@ html, body {
 .loud { display: flex; gap: 2px; margin-top: 2px; }
 .loud i { width: 9px; height: 3px; border-radius: 2px; background: #ffffff26; }
 .loud i.on { background: #f97316; }
-
-.mascot {
-  position: fixed;
-  left: 10px;
-  bottom: calc(var(--tray, 100px) + 4px);
-  width: 140px;
-  pointer-events: none;
-}
-.mascot svg { display: block; width: 100%; height: auto; }
-.say {
-  position: absolute;
-  left: 92%;
-  top: 6px;
-  margin: 0;
-  width: max-content;
-  max-width: 200px;
-  padding: 7px 11px;
-  background: #fff8e8;
-  color: #2a170a;
-  border-radius: 14px 14px 14px 4px;
-  font-size: 13px;
-  font-weight: 700;
-  box-shadow: 0 4px 14px #0006;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity .2s, transform .2s;
-}
-.say.on { opacity: 1; transform: none; }
 
 .intro {
   position: fixed;
@@ -172,9 +144,20 @@ html, body {
   transition: opacity .5s, visibility .5s;
 }
 .intro.gone { opacity: 0; visibility: hidden; }
-.intro:not(.gone) ~ .mascot { visibility: hidden; }
 .intro-card { text-align: center; display: grid; justify-items: center; gap: 10px; max-width: 560px; }
-.intro-bhai { width: 190px; height: auto; filter: drop-shadow(0 10px 30px #f9731666); animation: bhai-in .7s cubic-bezier(.2,1.6,.4,1) both; }
+.intro-bomb { position: relative; width: 170px; animation: bomb-in .7s cubic-bezier(.2,1.6,.4,1) both, rock 2.6s ease-in-out .7s infinite; transform-origin: 50% 90%; }
+.intro-bomb img { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 30px #f9731655); }
+/* Tip of the fuse in sutli.svg sits at (66, 24) of a 120x140 viewBox. */
+.fuse-spark {
+  position: absolute;
+  left: 55%; top: 17%;
+  width: 22px; height: 22px;
+  margin: -11px 0 0 -11px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 18%, #ffd23f 30%, #f97316 55%, #f9731600 72%);
+  box-shadow: 0 0 24px 8px #ffb34788;
+  animation: fizz .14s steps(2) infinite;
+}
 .intro h1 {
   margin: 0;
   font-size: clamp(44px, 9vw, 84px);
@@ -215,18 +198,32 @@ html, body {
 .intro-note a { color: #ffd166; }
 @keyframes shimmer { to { background-position: 300% 0; } }
 @keyframes pulse { 70% { box-shadow: 0 0 0 18px #f9731600, 0 10px 30px #f9731666; } 100% { box-shadow: 0 0 0 0 #f9731600, 0 10px 30px #f9731666; } }
-@keyframes bhai-in { from { transform: translateY(40px) scale(.6); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .intro-bhai, .intro h1 span, .go { animation: none; } }
+@keyframes bomb-in { from { transform: translateY(40px) scale(.6); opacity: 0; } }
+@keyframes rock { 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+@keyframes fizz { 50% { transform: scale(.65) rotate(30deg); opacity: .8; } }
+.wishbox { border: 1px solid #ffffff26; border-radius: 18px; background: #0d0f1f; color: #f5f1e8; padding: 22px; width: min(420px, 92vw); }
+.wishbox::backdrop { background: #05060fcc; }
+.wishbox form { display: grid; gap: 12px; }
+.wishbox label { font-weight: 800; font-size: 18px; }
+.wishbox input { font: inherit; font-size: 18px; padding: 12px 14px; border-radius: 12px; border: 1px solid #ffffff33; background: #ffffff10; color: inherit; }
+.wishrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.wishrow .go { padding: 12px 30px; animation: none; margin: 0; }
+.soundtap { position: fixed; left: 50%; bottom: 150px; transform: translateX(-50%); z-index: 6; font: inherit; font-weight: 800; font-size: 18px; padding: 14px 26px; border: 0; border-radius: 999px; background: #ffb547; color: #1a0d00; box-shadow: 0 0 30px #ffb54788; cursor: pointer; animation: throb 1.4s ease-in-out infinite; }
+@keyframes throb { 50% { transform: translateX(-50%) scale(1.07); } }
+.wishrow .wa { display: inline-flex; align-items: center; gap: 8px; padding: 11px 16px; border-radius: 999px; background: #25d366; color: #05140a; font-weight: 800; text-decoration: none; }
+.soundtap:disabled { animation: none; opacity: .85; cursor: default; }
+.wishrow #wishshare, .wishrow #wishvideo { font: inherit; padding: 11px 16px; border-radius: 999px; border: 1px solid #ffffff33; background: #ffffff14; color: inherit; cursor: pointer; }
+.wishnote { margin: 0; font-size: 13px; color: #c9c3b8; }
+
+@media (prefers-reduced-motion: reduce) { .intro-bomb, .fuse-spark, .intro h1 span, .go, .soundtap { animation: none; } }
 
 @media (max-width: 720px) {
-  .intro-bhai { width: 140px; }
-  .mascot { width: 84px; }
-  .say { font-size: 12px; max-width: 150px; }
+  .intro-bomb { width: 124px; }
   .count { order: 3; width: 100%; font-size: 12px; }
   .ctrls { gap: 6px; }
   .ctrls button { padding: 6px 9px; font-size: 12px; }
   .vol input { width: 80px; }
   .card { width: 78px; }
-  .card img { width: 40px; height: 46px; }
+  .card img { width: 44px; height: 44px; }
   .card .key { display: none; }
 }

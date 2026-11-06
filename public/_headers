@@ -12,3 +12,6 @@
 
 /crackers/*
   Cache-Control: public, max-age=86400
+
+/photos/*
+  Cache-Control: public, max-age=86400

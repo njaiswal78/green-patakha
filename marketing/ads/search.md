@@ -14,12 +14,12 @@ Final URL: {SITE}/?utm_source=google&utm_medium=cpc&utm_campaign=launch&utm_term
 Headlines (30 characters max):
 - Burst Crackers Online, Free
 - Real Cracker Sound, No Smoke
-- 12 Indian Patakhe, ₹0
+- 15 Indian Patakhe, ₹0
 - Sutli Bomb to 1000 Wala Ladi
 - Volume 0 to 100, Your Choice
 
 Descriptions (90 characters max):
-- Real recorded bangs from 12 Indian crackers. No login, no ads, no smoke. Works on phones.
+- Real recorded bangs from 15 Indian crackers. No login, no ads, no smoke. Works on phones.
 - Pick a phuljhadi, anar or sutli bomb, tap the street and set your own volume. Free.
 
 ## Ad group 2: alternatives
@@ -30,7 +30,7 @@ Final URL: {SITE}/compare?utm_source=google&utm_medium=cpc&utm_campaign=launch&u
 
 Headlines:
 - Virtual Crackers, Compared
-- All 12 Unlocked, Real Sound
+- All 15 Unlocked, Real Sound
 - No Hidden Boxes, No Rounds
 - Open Source Diwali Crackers
 
@@ -49,6 +49,6 @@ Headlines:
 - No Ads, No Login, No Smoke
 
 Descriptions:
-- 12 Indian crackers with real recorded sound. ₹0, no ads, no in-app purchase.
+- 15 Indian crackers with real recorded sound. ₹0, no ads, no in-app purchase.
 
 Negative keywords: buy, shop, near me, wholesale, sivakasi, price list, delivery

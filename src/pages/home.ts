@@ -25,7 +25,7 @@ const FAQ: [string, string][] = [
   ],
   [
     "Which crackers are there?",
-    `<b>12 crackers you'd find at an Indian patakha shop.</b> ${CRACKERS.map((c) => `${esc(c.name)} (${c.hindi})`).join(", ")}.`,
+    `<b>15 crackers you'd find at an Indian patakha shop.</b> ${CRACKERS.map((c) => `${esc(c.name)} (${c.hindi})`).join(", ")}.`,
   ],
   [
     "Can I host it myself?",
@@ -43,12 +43,12 @@ const FAQ: [string, string][] = [
 
 export function homePage(origin: string, repo: string) {
   const tray = CRACKERS.slice(0, 11)
-    .map((c) => `<a href="/play"><img src="/crackers/${c.id}.svg" alt="" width="36" height="42"><b>${c.hindi}</b>${esc(c.name)}</a>`)
+    .map((c) => `<a href="/play"><img src="/photos/${c.id}.jpg" alt="" width="40" height="40"><b>${c.hindi}</b>${esc(c.name)}</a>`)
     .join("");
 
   const cards = CRACKERS.map(
     (c) => `<a class="cracker" href="/play">
-  <div class="img"><img src="/crackers/${c.id}.svg" alt="${esc(c.name)} (${esc(c.english)})" width="55" height="64" loading="lazy"></div>
+  <div class="img"><img src="/photos/${c.id}.jpg" alt="${esc(c.name)} (${esc(c.english)})" width="120" height="120" loading="lazy"></div>
   <span class="hi">${c.hindi}</span>
   <span>${esc(c.name)}</span>
   <span class="en">${esc(c.english)}</span>
@@ -61,9 +61,9 @@ export function homePage(origin: string, repo: string) {
   const body = `
 <section class="hero">
   <div class="wrap">
-    <img src="/mascot.svg" alt="Sutli Bhai, the Green Patakha mascot, waving" width="140" height="140">
+    <img src="/crackers/sutli.svg" alt="A sutli bomb" width="110" height="128">
     <p class="eyebrow">Diwali 2026 · Sunday, 8 November</p>
-    <h1>Burst 12 Indian patakhe with real sound.<br>0 grams of smoke.</h1>
+    <h1>Burst 15 Indian patakhe with real sound.<br>0 grams of smoke.</h1>
     <p class="lead">Pick a phuljhadi, anar, sutli bomb or 1000 wala ladi and tap the street. The bangs are real recordings, not synthesised beeps, and you set the volume. Free, no login, open source.</p>
     <a class="btn big" href="/play">Start bursting</a>
     <p class="sub">Works on phones. Nothing to install.</p>
@@ -117,7 +117,7 @@ export function homePage(origin: string, repo: string) {
       </div></div>
       <div class="card"><div class="n">3</div><div>
         <h3>Fire at will, and read the code.</h3>
-        <p>All 12 crackers from the first tap: no boxes to find, no 20-cracker rounds, no paid greeting. The whole thing is MIT open source, so you can run it yourself. None of the four sites we checked lists its source code.</p>
+        <p>All 15 crackers from the first tap: no boxes to find, no 20-cracker rounds, no paid greeting. The whole thing is MIT open source, so you can run it yourself. None of the four sites we checked lists its source code.</p>
         <p class="src">Sources: <a href="${SRC.virtualDiwali.url}" rel="noopener">Virtual Diwali</a> (16 hidden boxes), <a href="${SRC.oxaam.url}" rel="noopener">OXAAM</a> (rounds of 20), <a href="${SRC.shareMyInvite.url}" rel="noopener">ShareMyInvite</a> (“One payment”), checked ${CHECKED}. <a href="/compare">Full comparison</a>.</p>
       </div></div>
     </div>
@@ -140,7 +140,7 @@ export function homePage(origin: string, repo: string) {
 <section id="crackers">
   <div class="wrap">
     <p class="eyebrow">The cracker shop</p>
-    <h2>12 crackers from every Indian childhood.</h2>
+    <h2>15 crackers from every Indian childhood.</h2>
     <p class="lead">Each one burns the way the real one does: the anar sputters out, the chakri wanders toward your feet, the ladi jumps as it pops.</p>
     <div class="crackers" style="margin-top:28px">
 ${cards}
@@ -170,7 +170,7 @@ ${cards}
     <div class="agent">
 <span class="you">You:</span> Which Diwali crackers are on Green Patakha?<br>
 <span class="tool">→ list_crackers</span><br>
-Assistant: 12. Phuljhadi, Anar, Chakri, Colour Pencil, Bijli, Sutli Bomb, Hydrogen Bomb, 1000 Wala Ladi, Rocket, 12 Shot, Saanp Goli, Tikli Bandook.<br>
+Assistant: ${CRACKERS.length}. ${CRACKERS.map((c) => esc(c.name)).join(", ")}.<br>
 <span class="you">You:</span> How many have people burst so far?<br>
 <span class="tool">→ get_stats</span><br>
 Assistant: Here's the live total, by cracker.
@@ -201,7 +201,7 @@ Assistant: Here's the live total, by cracker.
       <div class="amount">₹0</div>
       <p class="muted">Forever. No ads, no login, no in-app purchase.</p>
       <ul>
-        <li>All 12 crackers, unlimited</li>
+        <li>All 15 crackers, unlimited</li>
         <li>Real recorded sound, volume 0 to 100</li>
         <li>Auto mela, Jhaadu, Gentle flashes</li>
         <li>Phones, tablets, laptops and TVs</li>
@@ -222,7 +222,7 @@ ${faq}
 
 <section class="close">
   <div class="wrap">
-    <h2>Burst all 12 tonight. 0 grams of smoke.</h2>
+    <h2>Burst all 15 tonight. 0 grams of smoke.</h2>
     <p class="lead" style="margin:0 auto 24px">Real sound at your volume, in your browser, free.</p>
     <a class="btn big" href="/play">Start bursting</a>
   </div>
@@ -236,7 +236,7 @@ ${faq}
       applicationCategory: "GameApplication",
       operatingSystem: "Any modern web browser",
       url: origin,
-      description: "Burst 12 Indian Diwali crackers in the browser with real recorded sound and zero smoke. Free and open source.",
+      description: "Burst 15 Indian Diwali crackers in the browser with real recorded sound and zero smoke. Free and open source.",
       offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
       license: "https://opensource.org/licenses/MIT",
       codeRepository: repo,
