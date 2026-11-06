@@ -26,8 +26,15 @@
   },
   // Set APP_ORIGIN to your domain (https://example.com) once it is attached.
   // Empty means "use the URL the request came in on".
+  "workers_dev": true,
+  // Routes rather than custom domains: the zone's proxied DNS records (left over from the registrar) stay,
+  // and the Worker answers every request before it would reach them.
+  "routes": [
+    { "pattern": "diwali.click/*", "zone_name": "diwali.click" },
+    { "pattern": "www.diwali.click/*", "zone_name": "diwali.click" }
+  ],
   "vars": {
-    "APP_ORIGIN": "",
+    "APP_ORIGIN": "https://diwali.click",
     "REPO_URL": "https://github.com/njaiswal78/green-patakha"
   },
   "d1_databases": [

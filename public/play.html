@@ -21,7 +21,7 @@
     <a class="logo" href="/about"><span class="dot"></span>Green Patakha</a>
     <p class="count"><b id="mine">0</b> by you · <b id="all">…</b> by everyone</p>
     <div class="ctrls">
-      <button id="wishbtn" type="button" title="Write your own wish in the sky">Sky wish</button>
+      <button id="wishbtn" type="button" title="Write a personal Diwali wish in fireworks and send it to a friend">💌 Send a wish</button>
       <button id="auto" type="button" aria-pressed="false" title="Fires crackers on its own (A)">Auto mela</button>
       <button id="sweep" type="button" title="Sweep the paper off the street">Jhaadu</button>
       <button id="gentle" type="button" aria-pressed="false" title="Dimmer flashes, no shake">Gentle flashes</button>
@@ -44,12 +44,14 @@
       <p class="intro-lead">15 Indian patakhe. Real recorded bangs. Zero smoke.</p>
       <ul class="chips"><li>फुलझड़ी</li><li>अनार</li><li>सुतली बम</li><li>1000 वाला लड़ी</li><li>रॉकेट</li></ul>
       <button id="start" class="go" type="button">Phodo!</button>
+      <button id="introwish" class="introwish" type="button">💌 Send a Diwali wish to a friend</button>
       <p class="intro-note">Sound is loud. Volume is top right. <a href="/about">What is this?</a></p>
     </div>
   </section>
 
   <button id="soundtap" class="soundtap" type="button" hidden>🔊 Tap anywhere for sound</button>
   <button id="vidready" class="soundtap" type="button" hidden></button>
+  <button id="wishnudge" class="soundtap" type="button" hidden>💌 Write your own Diwali wish in the sky and send it to a friend</button>
   <div id="hint" class="hint gone" role="status">
     <b>Pick a patakha below, then tap the street to light it.</b>
     <span>Sound is loud. Set your volume with the slider, and go easy on headphones. Drag a lit phuljhadi to wave it.</span>
@@ -57,7 +59,7 @@
 
   <dialog id="wishbox" class="wishbox" aria-labelledby="wishlabel">
     <form method="dialog">
-      <label id="wishlabel" for="wish">Write a wish in the sky</label>
+      <label id="wishlabel" for="wish">Send a personal Diwali wish</label>
       <input id="wish" maxlength="24" placeholder="Happy Diwali, Maa" autocomplete="off" required>
       <input id="wishfrom" maxlength="20" placeholder="Your name (optional)" autocomplete="nickname" aria-label="Your name (optional)">
       <div class="wishrow">
@@ -66,7 +68,7 @@
         <button type="button" id="wishshare">Share link</button>
         <button type="button" id="wishvideo">Status video</button>
       </div>
-      <p class="wishnote">Your friend opens the link and sees your wish burst over their street.</p>
+      <p class="wishnote">Your friend opens the link and sees your words burst in fireworks over their street. The message stays secret until it plays.</p>
     </form>
   </dialog>
 

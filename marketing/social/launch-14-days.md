@@ -2,7 +2,7 @@
 
 Written in Natrajan's first person. Diwali is Sunday 8 November 2026, so the set runs 6–19 November.
 
-Replace `{SITE}` with the production URL before posting (the workers.dev URL or the custom domain). Every link carries `utm_source={network}&utm_medium=social&utm_campaign=launch`.
+Replace `{SITE}` with the production URL before posting: https://diwali.click. Every link carries `utm_source={network}&utm_medium=social&utm_campaign=launch`.
 
 Post only after `{SITE}/play` works on the production URL. None of these are scheduled; the accounts aren't connected.
 

@@ -18,5 +18,14 @@ const app = createApp((c) => {
 });
 
 export default {
-  fetch: app.fetch,
+  fetch(req, env, ctx) {
+    // Send page visits on workers.dev or www to the real domain. Browsers keep the #fragment
+    // across redirects, so sealed wish links shared before the move still open.
+    const url = new URL(req.url);
+    const home = env.APP_ORIGIN && new URL(env.APP_ORIGIN).hostname;
+    if (home && (url.hostname.endsWith(".workers.dev") || url.hostname === `www.${home}`) && req.method === "GET" && !url.pathname.startsWith("/api/") && url.pathname !== "/mcp") {
+      return Response.redirect(env.APP_ORIGIN + url.pathname + url.search, 301);
+    }
+    return app.fetch(req, env, ctx);
+  },
 } satisfies ExportedHandler<Env>;

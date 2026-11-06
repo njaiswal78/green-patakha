@@ -61,6 +61,9 @@ html, body {
   cursor: pointer;
 }
 .ctrls button:hover { background: #ffffff22; }
+.ctrls #wishbtn { background: #ffb547; border-color: #ffb547; color: #1a0d00; font-weight: 800; }
+.introwish { font: inherit; font-weight: 700; font-size: 16px; padding: 10px 20px; border-radius: 999px; border: 1px solid #ffb54788; background: #ffb5471a; color: #ffd8a0; cursor: pointer; }
+.introwish:hover { background: #ffb54733; }
 .ctrls button[aria-pressed="true"] { background: #f97316; border-color: #f97316; color: #1a0d02; }
 .vol {
   display: flex; align-items: center; gap: 8px;

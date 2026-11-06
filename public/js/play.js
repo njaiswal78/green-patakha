@@ -37,7 +37,9 @@ function onFire(id) {
   localStorage.setItem("gp.mine", String(mine));
   if (MILESTONES.has(mine)) say(`${fmt.format(mine)} patakhe!`, true);
   else if (mine % 15 === 0) greet();
+  if (++played === 12) nudgeWish();
 }
+let played = 0;
 
 // ---------- sky messages ----------
 
@@ -355,14 +357,26 @@ wishInput.addEventListener("input", syncWa);
 fromInput.addEventListener("input", syncWa);
 const shareable = () => [wishInput, fromInput].every((i) => i.reportValidity()) && sealed === sealing;
 waLink.addEventListener("click", (e) => shareable() || e.preventDefault());
-$("#wishbtn").addEventListener("click", () => {
+function openWishBox() {
+  nudge.hidden = true;
   wishInput.value = wish;
   try { fromInput.value = localStorage.getItem("gp.from") || ""; } catch {}
   wishBox.returnValue = "";
   shareBtn.textContent = "Share link";
   syncWa();
   wishBox.showModal();
-});
+}
+$("#wishbtn").addEventListener("click", openWishBox);
+// The intro's own click handler enters the game as this click bubbles; the box opens on top.
+$("#introwish").addEventListener("click", openWishBox);
+// Once per visit, a dozen crackers in, remind people they can send their own wish.
+const nudge = $("#wishnudge");
+nudge.addEventListener("click", openWishBox);
+function nudgeWish() {
+  if (!vidReady.hidden || !$("#soundtap").hidden || wishBox.open) return;
+  nudge.hidden = false;
+  setTimeout(() => (nudge.hidden = true), 9000);
+}
 wishBox.addEventListener("close", () => {
   const w = cleanWish(wishInput.value);
   if (wishBox.returnValue !== "fire" || !w) return;
