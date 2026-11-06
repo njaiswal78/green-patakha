@@ -328,7 +328,8 @@ const wishShare = () => {
   const u = new URL("/", location.href);
   u.searchParams.set("wish", w);
   if (f) u.searchParams.set("from", f);
-  return { url: u.href, text: `${f ? f + " sent you" : "Here's"} a Diwali wish in fireworks: “${w}” 🎆 Tap to light it:` };
+  // Sent from the sender's own chat, so first person; their name already shows in the link preview and on arrival.
+  return { url: u.href, text: `Happy Diwali! 🪔 I wrote “${w}” in fireworks for you. Open it with sound on 🔊` };
 };
 const syncWa = () => {
   const s = wishShare();
@@ -351,6 +352,7 @@ wishBox.addEventListener("close", () => {
   wish = w;
   const q = new URLSearchParams(location.search);
   q.set("wish", wish);
+  q.delete("from");
   history.replaceState(null, "", `?${q}`);
   sound.unlock();
   hint.classList.add("gone");
@@ -359,7 +361,7 @@ wishBox.addEventListener("close", () => {
 shareBtn.addEventListener("click", async () => {
   const { url, text } = wishShare();
   try {
-    if (navigator.share) await navigator.share({ title: "A Diwali wish for you", text, url });
+    if (navigator.share) await navigator.share({ text, url });
     else {
       await navigator.clipboard.writeText(`${text} ${url}`);
       shareBtn.textContent = "Link copied";
