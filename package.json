@@ -1,0 +1,34 @@
+{
+  "name": "green-patakha",
+  "version": "0.1.0",
+  "description": "Burst Indian Diwali crackers in the browser with real recorded sound and zero smoke. Cloudflare Worker or Docker.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/njaiswal78/green-patakha.git"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types",
+    "db:migrate:local": "wrangler d1 migrations apply green-patakha --local",
+    "db:migrate": "wrangler d1 migrations apply green-patakha --remote",
+    "start": "tsx server/node.ts",
+    "check": "tsc && python3 scripts/check-text.py"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.6",
+    "hono": "^4.13.16",
+    "tsx": "^4.23.15"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.158.0"
+  }
+}

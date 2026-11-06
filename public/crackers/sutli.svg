@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140">
+  <defs>
+    <radialGradient id="ball" cx=".38" cy=".35" r=".7">
+      <stop offset="0" stop-color="#e8cf98"/>
+      <stop offset=".6" stop-color="#b98f4f"/>
+      <stop offset="1" stop-color="#6e5126"/>
+    </radialGradient>
+    <clipPath id="c"><circle cx="60" cy="88" r="40"/></clipPath>
+  </defs>
+  <ellipse cx="60" cy="130" rx="38" ry="6" fill="#000" opacity=".35"/>
+  <circle cx="60" cy="88" r="40" fill="url(#ball)"/>
+  <g clip-path="url(#c)" fill="none" stroke="#7d5a2b" stroke-width="2" opacity=".85">
+    <ellipse cx="60" cy="88" rx="40" ry="8" transform="rotate(-35 60 88)"/>
+    <ellipse cx="60" cy="88" rx="40" ry="16" transform="rotate(-35 60 88)"/>
+    <ellipse cx="60" cy="88" rx="40" ry="25" transform="rotate(-35 60 88)"/>
+    <ellipse cx="60" cy="88" rx="40" ry="33" transform="rotate(-35 60 88)"/>
+    <ellipse cx="60" cy="88" rx="40" ry="8" transform="rotate(40 60 88)"/>
+    <ellipse cx="60" cy="88" rx="40" ry="17" transform="rotate(40 60 88)"/>
+    <ellipse cx="60" cy="88" rx="40" ry="27" transform="rotate(40 60 88)"/>
+    <ellipse cx="60" cy="88" rx="40" ry="36" transform="rotate(40 60 88)"/>
+    <ellipse cx="60" cy="88" rx="12" ry="40" transform="rotate(5 60 88)"/>
+    <ellipse cx="60" cy="88" rx="26" ry="40" transform="rotate(5 60 88)"/>
+  </g>
+  <g clip-path="url(#c)" fill="none" stroke="#f2deb0" stroke-width=".8" opacity=".6">
+    <ellipse cx="60" cy="88" rx="40" ry="20" transform="rotate(-35 60 88)"/>
+    <ellipse cx="60" cy="88" rx="40" ry="22" transform="rotate(40 60 88)"/>
+  </g>
+  <path d="M60 48 q-3 -14 6 -24" stroke="#2b9348" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <rect x="68" y="102" width="40" height="16" rx="2" fill="#d62828" transform="rotate(-8 88 110)"/>
+  <text x="88" y="114" transform="rotate(-8 88 110)" font-family="Noto Sans Devanagari, Kohinoor Devanagari, Mangal, Nirmala UI, sans-serif" font-size="9" font-weight="800" fill="#fff" text-anchor="middle">&#x938;&#x941;&#x924;&#x932;&#x940; &#x92C;&#x92E;</text>
+</svg>

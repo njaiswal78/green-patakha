@@ -1,0 +1,10 @@
+node_modules/
+.wrangler/
+.dev.vars
+.env
+data/
+*.db
+*.db-wal
+*.db-shm
+sound-src/
+.DS_Store

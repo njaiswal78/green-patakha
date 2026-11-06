@@ -1,0 +1,47 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "green-patakha",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-11-06",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true, "traces": { "enabled": true } },
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/",
+      "/play",
+      "/compare",
+      "/docs",
+      "/docs/*",
+      "/api/*",
+      "/mcp",
+      "/llms.txt",
+      "/llms-full.txt",
+      "/robots.txt",
+      "/sitemap.xml"
+    ]
+  },
+  // Set APP_ORIGIN to your domain (https://example.com) once it is attached.
+  // Empty means "use the URL the request came in on".
+  "vars": {
+    "APP_ORIGIN": "",
+    "REPO_URL": "https://github.com/njaiswal78/green-patakha"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "green-patakha",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "FIRE_LIMIT",
+      "namespace_id": "4801",
+      "simple": { "limit": 30, "period": 60 }
+    }
+  ]
+}

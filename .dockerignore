@@ -1,0 +1,8 @@
+node_modules
+.wrangler
+.git
+data
+sound-src
+marketing
+.env
+.dev.vars

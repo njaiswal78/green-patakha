@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Burst crackers now · Green Patakha</title>
+  <meta name="description" content="Pick a phuljhadi, anar, chakri, sutli bomb, ladi or rocket and tap the street to light it. Real recorded sound, your own volume, zero smoke.">
+  <meta property="og:title" content="Burst crackers now · Green Patakha">
+  <meta property="og:description" content="12 Indian crackers with real recorded sound. Zero smoke. Free and open source.">
+  <meta property="og:image" content="/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#05060f">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/play.css">
+  <script type="module" src="/js/play.js"></script>
+</head>
+<body>
+  <canvas id="sky" aria-label="A night street where your crackers go off"></canvas>
+
+  <header class="bar">
+    <a class="logo" href="/"><span class="dot"></span>Green Patakha</a>
+    <p class="count"><b id="mine">0</b> by you · <b id="all">…</b> by everyone</p>
+    <div class="ctrls">
+      <button id="auto" type="button" aria-pressed="false" title="Fires crackers on its own (A)">Auto mela</button>
+      <button id="sweep" type="button" title="Sweep the paper off the street">Jhaadu</button>
+      <button id="gentle" type="button" aria-pressed="false" title="Dimmer flashes, no shake">Gentle flashes</button>
+      <div class="vol">
+        <button id="mute" type="button" aria-label="Mute (M)"></button>
+        <input id="volume" type="range" min="0" max="100" step="1" aria-label="Volume">
+        <output id="volnum">70</output>
+      </div>
+      <button id="full" type="button" aria-label="Full screen" title="Full screen (F)">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="hint" class="hint" role="status">
+    <b>Pick a patakha below, then tap the street to light it.</b>
+    <span>Sound is on. Use the slider to set your volume. Drag a lit phuljhadi to wave it.</span>
+  </div>
+
+  <nav class="tray" id="tray" aria-label="Choose a cracker" role="radiogroup"></nav>
+</body>
+</html>

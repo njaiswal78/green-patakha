@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#0b4f2a"/><stop offset=".45" stop-color="#1f9d55"/><stop offset="1" stop-color="#0a3f22"/></linearGradient>
+    <linearGradient id="top" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#37c26f"/><stop offset="1" stop-color="#157a40"/></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="132" rx="42" ry="6" fill="#000" opacity=".35"/>
+  <path d="M22 50 L60 38 L98 50 L60 62 Z" fill="url(#top)"/>
+  <path d="M22 50 L60 62 L60 132 L22 120 Z" fill="url(#g)"/>
+  <path d="M98 50 L60 62 L60 132 L98 120 Z" fill="#0d5c31"/>
+  <path d="M22 50 L60 62 L98 50" stroke="#ffd166" stroke-width="2.5" fill="none"/>
+  <path d="M22 120 L60 132 L98 120" stroke="#ffd166" stroke-width="2.5" fill="none"/>
+  <g transform="translate(41 92)">
+    <path d="M0 -20 L5 -7 L19 -8 L8 1 L13 15 L0 6 L-13 15 L-8 1 L-19 -8 L-5 -7 Z" fill="#d62828" stroke="#ffd166" stroke-width="1.5"/>
+    <text x="0" y="3" font-family="Arial Black, Arial, sans-serif" font-size="10" font-weight="900" fill="#fff" text-anchor="middle">H</text>
+  </g>
+  <text x="79" y="84" transform="skewY(-17)" font-family="Noto Sans Devanagari, Kohinoor Devanagari, Mangal, Nirmala UI, sans-serif" font-size="9" font-weight="800" fill="#ffd166" text-anchor="middle">&#x939;&#x93E;&#x907;&#x921;&#x94D;&#x930;&#x94B;&#x91C;&#x928;</text>
+  <text x="79" y="96" transform="skewY(-17)" font-family="Noto Sans Devanagari, Kohinoor Devanagari, Mangal, Nirmala UI, sans-serif" font-size="9" font-weight="800" fill="#ffd166" text-anchor="middle">&#x92C;&#x92E;</text>
+  <path d="M60 50 q-4 -16 6 -30" stroke="#5c3d1e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M60 50 q-4 -16 6 -30" stroke="#a87b45" stroke-width="1.2" fill="none" stroke-dasharray="2 3"/>
+</svg>

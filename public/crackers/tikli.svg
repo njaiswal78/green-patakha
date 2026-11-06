@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140">
+  <defs>
+    <linearGradient id="metal" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#e9ecef"/><stop offset=".5" stop-color="#9aa1a8"/><stop offset="1" stop-color="#5c636a"/></linearGradient>
+    <linearGradient id="grip" x1="0" x2="1"><stop offset="0" stop-color="#7a0f0f"/><stop offset=".5" stop-color="#d62828"/><stop offset="1" stop-color="#5a0b0b"/></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="132" rx="46" ry="5" fill="#000" opacity=".3"/>
+  <path d="M8 54 L84 54 Q90 54 90 60 L90 70 L48 70 Q44 70 42 74 L40 80 L30 80 L30 70 L8 70 Q4 70 4 66 L4 58 Q4 54 8 54 Z" fill="url(#metal)" stroke="#3d4349" stroke-width="1.2"/>
+  <rect x="4" y="58" width="12" height="4" fill="#3d4349"/>
+  <path d="M64 70 L90 70 L98 118 Q99 124 93 124 L78 124 Q73 124 72 119 Z" fill="url(#grip)" stroke="#3d0707" stroke-width="1.2"/>
+  <path d="M76 84 L88 84 M78 94 L90 94 M80 104 L92 104" stroke="#ff6b6b" stroke-width="1.5" opacity=".6"/>
+  <path d="M48 70 Q50 86 62 86 L66 78" stroke="#3d4349" stroke-width="2.5" fill="none"/>
+  <path d="M56 72 Q56 80 61 80" stroke="#3d4349" stroke-width="2" fill="none"/>
+  <path d="M78 54 L80 46 L86 46 L86 54" fill="#5c636a"/>
+  <g transform="translate(26 108)">
+    <circle r="15" fill="#d62828"/>
+    <circle r="11" fill="none" stroke="#a4161a" stroke-width="1.2"/>
+    <circle r="7" fill="none" stroke="#a4161a" stroke-width="1.2"/>
+    <circle r="3" fill="#fff4e0"/>
+    <path d="M15 0 L40 4 L40 12 L14 8 Z" fill="#e5383b"/>
+    <g fill="#5a0b0b"><circle cx="21" cy="5" r="1.6"/><circle cx="28" cy="6.5" r="1.6"/><circle cx="35" cy="8" r="1.6"/></g>
+  </g>
+  <text x="46" y="36" font-family="Noto Sans Devanagari, Kohinoor Devanagari, Mangal, Nirmala UI, sans-serif" font-size="12" font-weight="800" fill="#ffd166" text-anchor="middle">&#x91F;&#x93F;&#x915;&#x932;&#x940;</text>
+</svg>

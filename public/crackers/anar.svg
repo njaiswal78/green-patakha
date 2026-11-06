@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140">
+  <defs>
+    <linearGradient id="body" x1="0" x2="1">
+      <stop offset="0" stop-color="#8f1d14"/>
+      <stop offset=".4" stop-color="#e63946"/>
+      <stop offset="1" stop-color="#7a1610"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" x2="1">
+      <stop offset="0" stop-color="#b8860b"/>
+      <stop offset=".5" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#a87400"/>
+    </linearGradient>
+    <clipPath id="cone"><path d="M28 134 L51 38 Q60 31 69 38 L92 134 Z"/></clipPath>
+  </defs>
+  <ellipse cx="60" cy="134" rx="34" ry="5" fill="#000" opacity=".35"/>
+  <path d="M28 134 L51 38 Q60 31 69 38 L92 134 Z" fill="url(#body)"/>
+  <g clip-path="url(#cone)" opacity=".9">
+    <path d="M10 70 L110 50 M10 92 L110 72 M10 114 L110 94" stroke="url(#gold)" stroke-width="4"/>
+    <rect x="20" y="96" width="80" height="22" fill="#2a9d8f"/>
+    <rect x="20" y="96" width="80" height="2.5" fill="#ffd166"/>
+    <rect x="20" y="115.5" width="80" height="2.5" fill="#ffd166"/>
+  </g>
+  <text x="60" y="111.5" font-family="Noto Sans Devanagari, Kohinoor Devanagari, Mangal, Nirmala UI, sans-serif" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">&#x905;&#x928;&#x93E;&#x930;</text>
+  <ellipse cx="60" cy="37" rx="9" ry="3" fill="#5c4a3a"/>
+  <path d="M60 36 q2 -10 -3 -16" stroke="#1d6b38" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M28 134 Q60 141 92 134" stroke="#5a1510" stroke-width="2" fill="none"/>
+</svg>
