@@ -1,4 +1,4 @@
-import { CRACKERS, LOUDNESS_LABEL } from "./catalog.js";
+import { CRACKERS, LOUDNESS_LABEL, cleanWish } from "./catalog.js";
 import { Sound } from "./audio.js";
 import { Show } from "./show.js";
 
@@ -42,7 +42,7 @@ function onFire(id) {
 
 const GREETINGS = ["Happy Diwali", "शुभ दीपावली", "Happy Diwali", "दीपावली मुबारक", "Shubh Deepavali", "Aur phodo!", "Roshan raho"];
 const MILESTONES = new Set([10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]);
-let wish = (new URLSearchParams(location.search).get("wish") || "").trim().slice(0, 24);
+let wish = cleanWish(new URLSearchParams(location.search).get("wish"));
 let lastSay = -1e9;
 function say(text, force = false) {
   const now = performance.now();
@@ -315,7 +315,7 @@ function enter() {
 }
 intro.addEventListener("click", (e) => { if (!e.target.closest("a")) enter(); });
 
-const sender = (new URLSearchParams(location.search).get("from") || "").trim().slice(0, 20);
+const sender = cleanWish(new URLSearchParams(location.search).get("from"), 20);
 
 const wishBox = $("#wishbox");
 const wishInput = $("#wish");
@@ -323,8 +323,8 @@ const fromInput = $("#wishfrom");
 const shareBtn = $("#wishshare");
 const waLink = $("#wishwa");
 const wishShare = () => {
-  const w = wishInput.value.trim().slice(0, 24) || "Happy Diwali";
-  const f = fromInput.value.trim().slice(0, 20);
+  const w = cleanWish(wishInput.value) || "Happy Diwali";
+  const f = cleanWish(fromInput.value, 20);
   const u = new URL("/", location.href);
   u.searchParams.set("wish", w);
   if (f) u.searchParams.set("from", f);
@@ -332,12 +332,17 @@ const wishShare = () => {
   return { url: u.href, text: `Happy Diwali! 🪔 I wrote “${w}” in fireworks for you. Open it with sound on 🔊` };
 };
 const syncWa = () => {
+  const bad = (i, max) => i.value.trim() && !cleanWish(i.value, max) ? "Links, emails and phone numbers can't go in the sky." : "";
+  wishInput.setCustomValidity(bad(wishInput, 24));
+  fromInput.setCustomValidity(bad(fromInput, 20));
   const s = wishShare();
   waLink.href = `https://wa.me/?text=${encodeURIComponent(`${s.text} ${s.url}`)}`;
   try { localStorage.setItem("gp.from", fromInput.value.trim()); } catch {}
 };
 wishInput.addEventListener("input", syncWa);
 fromInput.addEventListener("input", syncWa);
+const shareable = () => [wishInput, fromInput].every((i) => i.reportValidity());
+waLink.addEventListener("click", (e) => shareable() || e.preventDefault());
 $("#wishbtn").addEventListener("click", () => {
   wishInput.value = wish;
   try { fromInput.value = localStorage.getItem("gp.from") || ""; } catch {}
@@ -347,7 +352,7 @@ $("#wishbtn").addEventListener("click", () => {
   wishBox.showModal();
 });
 wishBox.addEventListener("close", () => {
-  const w = wishInput.value.trim().slice(0, 24);
+  const w = cleanWish(wishInput.value);
   if (wishBox.returnValue !== "fire" || !w) return;
   wish = w;
   const q = new URLSearchParams(location.search);
@@ -359,6 +364,7 @@ wishBox.addEventListener("close", () => {
   say(wish, true);
 });
 shareBtn.addEventListener("click", async () => {
+  if (!shareable()) return;
   const { url, text } = wishShare();
   try {
     if (navigator.share) await navigator.share({ text, url });
@@ -376,7 +382,7 @@ const vidReady = $("#vidready");
 let video = null;
 if (!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream || !(window.AudioContext || window.webkitAudioContext)) vidBtn.hidden = true;
 vidBtn.addEventListener("click", () => {
-  if (!wishInput.value.trim()) return wishInput.reportValidity();
+  if (!shareable()) return;
   if (vidReady.disabled) return;
   wishBox.close("fire");
   sound.unlock();
@@ -405,7 +411,7 @@ vidBtn.addEventListener("click", () => {
   rec.start(500);
   [["rocket", 0.25], ["skyshot", 0.8], ["multirocket", 3.5], ["skyshot", 5.5]].forEach(([id, t]) =>
     setTimeout(() => show.fire(id, show.W * (0.2 + Math.random() * 0.6)), t * 1000));
-  const w = wishInput.value.trim().slice(0, 24);
+  const w = cleanWish(wishInput.value);
   setTimeout(() => say(w, true), 5000);
   setTimeout(() => rec.stop(), 10000);
 });

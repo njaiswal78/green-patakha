@@ -5,12 +5,21 @@ import { comparePage } from "./pages/compare";
 import { docsHome, docsMcp, docsSelfHost } from "./pages/docs";
 import { homePage } from "./pages/home";
 import { esc } from "./pages/layout";
+import { cleanWish } from "../public/js/catalog.js";
 import type { Platform } from "./platform";
 
 type Env = { Variables: { p: Platform } };
 type C = Context<Env>;
 
 const MAX_BODY = 4096;
+const MAX_BATCH = 10;
+
+/** Reads the body as text, or null when it is over max. Checks Content-Length first so a huge upload is never buffered. */
+async function readBody(c: C, max: number) {
+  if (Number(c.req.header("content-length") || 0) > max) return null;
+  const raw = await c.req.text();
+  return raw.length > max ? null : raw;
+}
 
 export function securityHeaders(h: Headers, https: boolean) {
   h.set(
@@ -83,9 +92,9 @@ export function createApp(platform: (c: C) => Platform) {
     // Share previews need an absolute og:image; play.html stays plain static for any host.
     let body = (await res.text()).replace('content="/og.png"', `content="${c.var.p.origin}/og.png"`);
     // WhatsApp and friends show og:title, so a shared wish previews as the wish itself.
-    const wish = (c.req.query("wish") || "").trim().slice(0, 24);
+    const wish = cleanWish(c.req.query("wish"));
     if (wish) {
-      const from = (c.req.query("from") || "").trim().slice(0, 20);
+      const from = cleanWish(c.req.query("from"), 20);
       const title = esc(`“${wish}”, a Diwali wish${from ? ` from ${from}` : ""}`);
       body = body
         .replace("<title>Burst crackers now · Green Patakha</title>", `<title>${title}</title>`)
@@ -134,12 +143,11 @@ export function createApp(platform: (c: C) => Platform) {
     if (origin && origin !== new URL(c.req.url).origin && origin !== p.origin) {
       return apiError(c, "forbidden_origin", "Only this site's pages can write the counter from a browser.", 403);
     }
-    const ip = c.req.header("cf-connecting-ip") || c.req.header("x-forwarded-for")?.split(",")[0]?.trim() || "local";
-    if (!(await p.allow(ip))) {
+    if (!(await p.allow(p.ip))) {
       return apiError(c, "rate_limited", "Too many writes. Try again in a minute.", 429, { "Retry-After": "60" });
     }
-    const raw = await c.req.text();
-    if (raw.length > MAX_BODY) return apiError(c, "payload_too_large", "Body must be under 4 KB.", 413);
+    const raw = await readBody(c, MAX_BODY);
+    if (raw === null) return apiError(c, "payload_too_large", "Body must be under 4 KB.", 413);
     let body: unknown;
     try {
       body = JSON.parse(raw);
@@ -154,8 +162,8 @@ export function createApp(platform: (c: C) => Platform) {
 
   // ---------- MCP ----------
   app.post("/mcp", async (c) => {
-    const raw = await c.req.text();
-    if (raw.length > MAX_BODY * 4) return apiError(c, "payload_too_large", "Body too large.", 413);
+    const raw = await readBody(c, MAX_BODY * 4);
+    if (raw === null) return apiError(c, "payload_too_large", "Body too large.", 413);
     let msg: unknown;
     try {
       msg = JSON.parse(raw);
@@ -163,6 +171,7 @@ export function createApp(platform: (c: C) => Platform) {
       return c.json({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, 400);
     }
     if (Array.isArray(msg)) {
+      if (msg.length > MAX_BATCH) return c.json({ jsonrpc: "2.0", id: null, error: { code: -32600, message: `Batch too large (max ${MAX_BATCH}).` } }, 400);
       const out = (await Promise.all(msg.map((m) => mcp(c.var.p, m)))).filter(Boolean);
       return out.length ? c.json(out) : c.body(null, 202);
     }

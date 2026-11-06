@@ -19,7 +19,7 @@
     "db:migrate:local": "wrangler d1 migrations apply green-patakha --local",
     "db:migrate": "wrangler d1 migrations apply green-patakha --remote",
     "start": "tsx server/node.ts",
-    "check": "tsc && python3 scripts/check-text.py"
+    "check": "tsc && python3 scripts/check-text.py && node scripts/check-wish.mjs"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.6",

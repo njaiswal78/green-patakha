@@ -159,3 +159,13 @@ export const CRACKERS = [
 export const CRACKER_IDS = new Set(CRACKERS.map((c) => c.id));
 
 export const LOUDNESS_LABEL = ["Gentle", "Medium", "Loud", "Very loud"];
+
+/**
+ * Cleans a sky wish or sender name and returns "" when it looks like a scam: a link, an email or a phone number
+ * shown on our domain in a WhatsApp preview borrows our trust. ponytail: pattern filter, not moderation;
+ * a determined troll can still write rude words, which is why wishes are never stored or listed anywhere.
+ */
+export function cleanWish(s, max = 24) {
+  const w = String(s || "").replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069]/g, "").trim().slice(0, max);
+  return /https?:|www\.|@|\.(com|in|net|org|co|io|ly|xyz|me|app|link|top|site|info)\b/i.test(w) || (w.match(/\d/g) || []).length >= 5 ? "" : w;
+}

@@ -3,6 +3,7 @@ import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { mkdirSync, readdirSync, readFileSync } from "node:fs";
+import type { IncomingMessage } from "node:http";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { createApp, securityHeaders } from "../src/app";
@@ -14,6 +15,7 @@ const DATA_DIR = process.env.DATA_DIR || join(ROOT, "data");
 const PORT = Number(process.env.PORT || 8080);
 const ORIGIN = (process.env.APP_ORIGIN || "").replace(/\/$/, "");
 const REPO = process.env.REPO_URL || "https://github.com/njaiswal78/green-patakha";
+const TRUST_PROXY = process.env.TRUST_PROXY === "1";
 
 mkdirSync(DATA_DIR, { recursive: true });
 const sqlite = new DatabaseSync(join(DATA_DIR, "green-patakha.db"));
@@ -82,6 +84,11 @@ const app = createApp((c) => {
   const p: Platform = {
     db,
     allow,
+    // Forwarded headers are client-controlled unless a proxy you run sets them, so they're opt-in.
+    ip:
+      (TRUST_PROXY && c.req.header("x-forwarded-for")?.split(",")[0]?.trim()) ||
+      (c.env as { incoming?: IncomingMessage }).incoming?.socket.remoteAddress ||
+      "local",
     cache: null,
     waitUntil: (x) => void x.catch((e) => console.error(e)),
     fallback: (req) => files.fetch(req),

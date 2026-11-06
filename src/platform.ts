@@ -18,6 +18,8 @@ export interface Platform {
   db: Db;
   /** true when this caller may write; false means 429. */
   allow(key: string): Promise<boolean>;
+  /** Caller's address for rate limiting, taken only from a source the host can vouch for. */
+  ip: string;
   /** Edge cache for anonymous GETs, or null when there is none. */
   cache: Cache | null;
   waitUntil(p: Promise<unknown>): void;
