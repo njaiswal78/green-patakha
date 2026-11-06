@@ -33,7 +33,7 @@
     {
       "binding": "DB",
       "database_name": "green-patakha",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "f07e17ed-abf5-4c16-8ed9-aabca10ec9ed",
       "migrations_dir": "migrations"
     }
   ],
