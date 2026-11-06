@@ -372,7 +372,7 @@ shareBtn.addEventListener("click", async () => {
 const vidBtn = $("#wishvideo");
 const vidReady = $("#vidready");
 let video = null;
-if (!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream) vidBtn.hidden = true;
+if (!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream || !(window.AudioContext || window.webkitAudioContext)) vidBtn.hidden = true;
 vidBtn.addEventListener("click", () => {
   if (!wishInput.value.trim()) return wishInput.reportValidity();
   if (vidReady.disabled) return;
@@ -380,14 +380,15 @@ vidBtn.addEventListener("click", () => {
   sound.unlock();
   const stream = show.canvas.captureStream(30);
   const dest = sound.ctx.createMediaStreamDestination();
-  sound.master.connect(dest);
+  // Tap before the volume stage so the clip has full sound even if the player turned their speaker down.
+  sound.clip.connect(dest);
   stream.addTrack(dest.stream.getAudioTracks()[0]);
   const type = ["video/mp4;codecs=avc1,mp4a.40.2", "video/mp4", "video/webm;codecs=vp9,opus", "video/webm"].find((t) => MediaRecorder.isTypeSupported(t)) || "";
   const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 5e6 });
   const chunks = [];
   rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
   rec.onstop = () => {
-    sound.master.disconnect(dest);
+    sound.clip.disconnect(dest);
     stream.getTracks().forEach((t) => t.stop());
     show.mark = "";
     const mime = rec.mimeType.split(";")[0] || "video/webm";
@@ -402,6 +403,8 @@ vidBtn.addEventListener("click", () => {
   rec.start(500);
   [["rocket", 0.25], ["skyshot", 0.8], ["multirocket", 3.5], ["skyshot", 5.5]].forEach(([id, t]) =>
     setTimeout(() => show.fire(id, show.W * (0.2 + Math.random() * 0.6)), t * 1000));
+  const w = wishInput.value.trim().slice(0, 24);
+  setTimeout(() => say(w, true), 5000);
   setTimeout(() => rec.stop(), 10000);
 });
 vidReady.addEventListener("click", async () => {

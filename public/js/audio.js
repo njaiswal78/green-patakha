@@ -50,7 +50,7 @@ export class Sound {
       this.limiter.ratio.value = 20;
       this.limiter.attack.value = 0.002;
       this.limiter.release.value = 0.25;
-      const clip = c.createWaveShaper();
+      const clip = (this.clip = c.createWaveShaper());
       const curve = new Float32Array(2048);
       for (let i = 0; i < curve.length; i++) curve[i] = (0.92 * Math.tanh(2.5 * (i / 1023.5 - 1))) / Math.tanh(2.5); // 0.92: 4x oversampling overshoots
       clip.curve = curve;
