@@ -6,6 +6,7 @@ const $ = (s) => document.querySelector(s);
 const tray = $("#tray");
 const canvas = $("#sky");
 const hint = $("#hint");
+const intro = $("#intro");
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="];
 
 if ("audioSession" in navigator) {
@@ -108,7 +109,7 @@ fetch("/mascot.svg")
     mascot.insertAdjacentHTML("afterbegin", svg);
     bhai = mascot.querySelector("svg");
     if (autoTimer) pose("hyped", 0, "Mela shuru!");
-    else pose("wave", 2600, "Diwali mubarak! Chalo phodte hain.");
+    else if (intro.classList.contains("gone")) pose("wave", 2600, "Diwali mubarak! Chalo phodte hain.");
   })
   .catch(() => {});
 
@@ -284,6 +285,11 @@ addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
   if (e.key === " " || e.key === "Enter") {
     if (e.target instanceof HTMLButtonElement) return;
+    if (!intro.classList.contains("gone")) {
+      e.preventDefault();
+      enter();
+      return;
+    }
     e.preventDefault();
     sound.unlock();
     hint.classList.add("gone");
@@ -304,6 +310,34 @@ addEventListener("keydown", (e) => {
   }
 });
 
-if (new URLSearchParams(location.search).has("auto")) toggleAuto();
+// ---------- intro ----------
+
+// A silent show runs behind the title screen. It does not count: onFire is swapped out until the visitor enters.
+const DEMO = ["skyshot", "rocket", "rocket", "anar", "chakri", "anar", "phuljhadi", "skyshot", "pencil"];
+let demoTimer = 0;
+function demoTick() {
+  show.fire(DEMO[(Math.random() * DEMO.length) | 0], 60 + Math.random() * (show.W - 120));
+  demoTimer = setTimeout(demoTick, 600 + Math.random() * 700);
+}
+function enter() {
+  if (intro.classList.contains("gone")) return;
+  clearTimeout(demoTimer);
+  show.onFire = onFire;
+  show.sweep();
+  intro.classList.add("gone");
+  hint.classList.remove("gone");
+  sound.unlock();
+  pose("wave", 2200, "Chalo! Patakha chuno, sadak pe tap karo.");
+}
+intro.addEventListener("click", (e) => { if (!e.target.closest("a")) enter(); });
+
+if (new URLSearchParams(location.search).has("auto")) {
+  intro.classList.add("gone");
+  toggleAuto();
+} else {
+  show.onFire = () => {};
+  demoTick();
+  $("#start").focus();
+}
 
 window.greenPatakha = { show, sound, fire: (id, x, y) => show.fire(id, x, y), select };

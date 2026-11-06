@@ -6,6 +6,8 @@ const rand = (a, b) => a + Math.random() * (b - a);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 /** Every cracker throws this many times the sparks and light of the base design. */
 const BOOST = 5;
+/** Height and width of every cracker's impact. Scaling launch speed and gravity together draws the same arc, this much bigger, on the same timing. */
+const IMPACT = 2;
 
 /**
  * The night sky, the street, and everything burning on it.
@@ -407,11 +409,12 @@ export class Show {
 
   /** Cracker-facing emit: sparks and stars come out BOOST times, with jittered speed and life. */
   emit(p) {
+    if (p.kind !== "smoke") p = { ...p, vx: (p.vx || 0) * IMPACT, vy: (p.vy || 0) * IMPACT, g: (p.g ?? 1) * IMPACT };
     const o = this.spawn(p);
     if (o && (o.kind === "spark" || o.kind === "star")) {
       for (let k = 1; k < BOOST; k++) {
         const j = rand(0.82, 1.12);
-        this.spawn({ ...p, vx: (p.vx || 0) * j + rand(-12, 12), vy: (p.vy || 0) * j + rand(-12, 12), life: o.max * rand(0.8, 1.15) });
+        this.spawn({ ...p, vx: p.vx * j + rand(-12, 12), vy: p.vy * j + rand(-12, 12), life: o.max * rand(0.8, 1.15) });
       }
     }
     return o;
@@ -437,8 +440,8 @@ export class Show {
 
   flash(x, y, r, intensity, hue = 40, life = 0.18) {
     // BOOST x the lit area; a little extra punch, more would saturate to flat white.
-    const k = this.gentle ? 0.35 : 1.5;
-    this.lights.push({ x, y, r: r * (this.gentle ? 1 : Math.sqrt(BOOST)), i: intensity * k, hue, life, max: life });
+    const k = this.gentle ? 0.35 : 2;
+    this.lights.push({ x, y, r: r * (this.gentle ? 1 : Math.sqrt(BOOST) * IMPACT), i: intensity * k, hue, life, max: life });
   }
 
   addShake(v) {
@@ -717,7 +720,7 @@ export class Show {
       ctx.drawImage(gl, l.x - l.r, l.y - l.r, l.r * 2, l.r * 2);
     }
     if (sky > 0.02) {
-      ctx.globalAlpha = Math.min(this.gentle ? 0.05 : 0.32, sky * 0.12);
+      ctx.globalAlpha = Math.min(this.gentle ? 0.05 : 0.26, sky * 0.06);
       ctx.fillStyle = "#ffcf9a";
       ctx.fillRect(-20, -20, W + 40, H + 40);
     }
