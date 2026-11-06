@@ -4,6 +4,8 @@ import { makeItem } from "./items.js";
 const TAU = Math.PI * 2;
 const rand = (a, b) => a + Math.random() * (b - a);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/** Every cracker throws this many times the sparks and light of the base design. */
+const BOOST = 5;
 
 /**
  * The night sky, the street, and everything burning on it.
@@ -105,7 +107,8 @@ export class Show {
     this.canvas.height = Math.round(H * dpr);
     this.unit = clamp(Math.min(H / 820, W / 700), 0.45, 1.4);
     this.groundY = Math.round(H * 0.66);
-    this.maxParticles = W * H < 500000 ? 2600 : 5200;
+    // ponytail: fixed cap; slow GPUs drop frames near it. Upgrade path: adapt the cap to measured frame time.
+    this.maxParticles = (W * H < 500000 ? 2600 : 5200) * BOOST;
     this.buildBackground();
     const old = this.litter;
     this.litter = document.createElement("canvas");
@@ -402,7 +405,19 @@ export class Show {
     return null;
   }
 
+  /** Cracker-facing emit: sparks and stars come out BOOST times, with jittered speed and life. */
   emit(p) {
+    const o = this.spawn(p);
+    if (o && (o.kind === "spark" || o.kind === "star")) {
+      for (let k = 1; k < BOOST; k++) {
+        const j = rand(0.82, 1.12);
+        this.spawn({ ...p, vx: (p.vx || 0) * j + rand(-12, 12), vy: (p.vy || 0) * j + rand(-12, 12), life: o.max * rand(0.8, 1.15) });
+      }
+    }
+    return o;
+  }
+
+  spawn(p) {
     if (this.particles.length >= this.maxParticles) return null;
     const o = this.pool.pop() || {};
     o.kind = "spark";
@@ -421,12 +436,13 @@ export class Show {
   }
 
   flash(x, y, r, intensity, hue = 40, life = 0.18) {
-    const k = this.gentle ? 0.35 : 1;
-    this.lights.push({ x, y, r, i: intensity * k, hue, life, max: life });
+    // BOOST x the lit area; a little extra punch, more would saturate to flat white.
+    const k = this.gentle ? 0.35 : 1.5;
+    this.lights.push({ x, y, r: r * (this.gentle ? 1 : Math.sqrt(BOOST)), i: intensity * k, hue, life, max: life });
   }
 
   addShake(v) {
-    if (!this.gentle) this.shake = Math.min(18, this.shake + v);
+    if (!this.gentle) this.shake = Math.min(32, this.shake + v * 2);
   }
 
   scorch(x, y, r) {
@@ -591,7 +607,7 @@ export class Show {
         p.acc += p.emitTrail * dt;
         while (p.acc >= 1) {
           p.acc -= 1;
-          this.emit({ x: p.x, y: p.y, vx: p.vx * 0.1 + rand(-15, 15), vy: p.vy * 0.1 + rand(-10, 10), g: 0.25, drag: 2, life: rand(0.35, 0.8), size: 0.9 * this.unit, hue: 38, sat: 95, light: 55, trail: 0.6 });
+          this.spawn({ x: p.x, y: p.y, vx: p.vx * 0.1 + rand(-15, 15), vy: p.vy * 0.1 + rand(-10, 10), g: 0.25, drag: 2, life: rand(0.35, 0.8), size: 0.9 * this.unit, hue: 38, sat: 95, light: 55, trail: 0.6 });
         }
       }
       if (p.split > 0 && p.life < p.max * p.splitAt) {
@@ -600,7 +616,7 @@ export class Show {
         for (let k = 0; k < n; k++) {
           const a = rand(0, TAU);
           const sp = rand(40, 140) * this.unit;
-          this.emit({ x: p.x, y: p.y, vx: p.vx * 0.3 + Math.cos(a) * sp, vy: p.vy * 0.3 + Math.sin(a) * sp, g: 0.3, drag: 3, life: rand(0.12, 0.35), size: p.size * 0.6, hue: p.hue, sat: p.sat, light: 85, strobe: 1, trail: 0.5 });
+          this.spawn({ x: p.x, y: p.y, vx: p.vx * 0.3 + Math.cos(a) * sp, vy: p.vy * 0.3 + Math.sin(a) * sp, g: 0.3, drag: 3, life: rand(0.12, 0.35), size: p.size * 0.6, hue: p.hue, sat: p.sat, light: 85, strobe: 1, trail: 0.5 });
         }
         if (p.kind === "star") this.kill(i);
       }
@@ -701,7 +717,7 @@ export class Show {
       ctx.drawImage(gl, l.x - l.r, l.y - l.r, l.r * 2, l.r * 2);
     }
     if (sky > 0.02) {
-      ctx.globalAlpha = Math.min(this.gentle ? 0.05 : 0.22, sky * 0.12);
+      ctx.globalAlpha = Math.min(this.gentle ? 0.05 : 0.32, sky * 0.12);
       ctx.fillStyle = "#ffcf9a";
       ctx.fillRect(-20, -20, W + 40, H + 40);
     }

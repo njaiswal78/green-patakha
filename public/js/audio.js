@@ -9,6 +9,8 @@ const SETS = {
 };
 
 const STORE_KEY = "gp.sound";
+/** Recorded bangs are stacked this many deep, and the master bus is driven this hard. */
+const BOOST = 5;
 
 export class Sound {
   constructor() {
@@ -30,15 +32,39 @@ export class Sound {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) return;
       this.ctx = new Ctx({ latencyHint: "interactive" });
-      this.master = this.ctx.createGain();
-      this.limiter = this.ctx.createDynamicsCompressor();
-      this.limiter.threshold.value = -10;
-      this.limiter.knee.value = 6;
-      this.limiter.ratio.value = 12;
-      this.limiter.attack.value = 0.002;
-      this.limiter.release.value = 0.25;
-      this.master.connect(this.limiter);
-      this.limiter.connect(this.ctx.destination);
+      // Loudness chain: drive x5 -> bass shelf -> hard compressor -> makeup -> soft clip -> volume.
+      // The soft clip pins peaks at 0 dBFS, the most any browser can output; actual
+      // SPL is whatever the listener's speaker makes of full scale. Volume sits last
+      // so the slider scales real output instead of feeding the compressor.
+      const c = this.ctx;
+      this.bus = c.createGain();
+      this.master = c.createGain();
+      const drive = c.createGain();
+      drive.gain.value = BOOST;
+      const bass = c.createBiquadFilter();
+      bass.type = "lowshelf";
+      bass.frequency.value = 110;
+      bass.gain.value = 6;
+      this.limiter = c.createDynamicsCompressor();
+      this.limiter.threshold.value = -20;
+      this.limiter.knee.value = 4;
+      this.limiter.ratio.value = 20;
+      this.limiter.attack.value = 0.001;
+      this.limiter.release.value = 0.12;
+      const makeup = c.createGain();
+      makeup.gain.value = 5;
+      const clip = c.createWaveShaper();
+      const curve = new Float32Array(2048);
+      for (let i = 0; i < curve.length; i++) curve[i] = (0.92 * Math.tanh(2.5 * (i / 1023.5 - 1))) / Math.tanh(2.5); // 0.92: 4x oversampling overshoots
+      clip.curve = curve;
+      clip.oversample = "4x";
+      this.bus.connect(drive);
+      drive.connect(bass);
+      bass.connect(this.limiter);
+      this.limiter.connect(makeup);
+      makeup.connect(clip);
+      clip.connect(this.master);
+      this.master.connect(c.destination);
       this.applyVolume(true);
       this.noise = makeNoise(this.ctx, 2.5);
       this.load();
@@ -95,9 +121,9 @@ export class Sound {
       const p = this.ctx.createStereoPanner();
       p.pan.value = Math.max(-1, Math.min(1, pan));
       g.connect(p);
-      p.connect(this.master);
+      p.connect(this.bus);
     } else {
-      g.connect(this.master);
+      g.connect(this.bus);
     }
     return g;
   }
@@ -110,17 +136,22 @@ export class Sound {
   sample(set, { gain = 1, rate = 1, pan = 0, delay = 0 } = {}) {
     if (!this.ctx) return;
     const names = SETS[set];
-    const name = names[(Math.random() * names.length) | 0];
-    const buf = this.buffers[name];
-    if (!buf) {
-      this.synthBang({ gain, pan, delay, size: set === "boom" ? 1.6 : set === "sky" ? 1.2 : 0.8 });
-      return;
+    for (let k = 0; k < BOOST; k++) {
+      const buf = this.buffers[names[(Math.random() * names.length) | 0]];
+      // Layer 0 is the hit itself; the rest thicken it a few ms later, slightly detuned and spread.
+      const g = k ? gain * 0.6 : gain;
+      const d = delay + (k ? Math.random() * 0.035 : 0);
+      const pn = pan + (k ? (Math.random() - 0.5) * 0.5 : 0);
+      if (!buf) {
+        this.synthBang({ gain: g, pan: pn, delay: d, size: set === "boom" ? 1.6 : set === "sky" ? 1.2 : 0.8 });
+        continue;
+      }
+      const src = this.ctx.createBufferSource();
+      src.buffer = buf;
+      src.playbackRate.value = rate * (k ? 0.82 + Math.random() * 0.3 : 0.94 + Math.random() * 0.12);
+      src.connect(this.out(pn, g));
+      src.start(this.now(d));
     }
-    const src = this.ctx.createBufferSource();
-    src.buffer = buf;
-    src.playbackRate.value = rate * (0.94 + Math.random() * 0.12);
-    src.connect(this.out(pan, gain));
-    src.start(this.now(delay));
   }
 
   /** Low body under big bombs: a falling sine plus a short lowpassed noise. */

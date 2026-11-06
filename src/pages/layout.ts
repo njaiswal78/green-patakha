@@ -44,7 +44,7 @@ ${scripts}
   <div class="wrap nav-in">
     <a class="brand" href="/"><span class="dot"></span>Green Patakha</a>
     <nav class="links">
-      <a href="/#crackers">Crackers</a>
+      <a href="/about#crackers">Crackers</a>
       <a href="/compare">Compare</a>
       <a href="/docs">Docs</a>
       <a href="${o.repo}" rel="noopener">GitHub</a>
@@ -62,7 +62,7 @@ ${o.body}
       <p class="muted">Indian Diwali crackers in your browser, with real recorded sound and zero smoke. Free and open source.</p>
     </div>
     <div class="cols">
-      <div><b>Product</b><a href="/play">Burst crackers</a><a href="/#crackers">The 12 crackers</a><a href="/compare">Compare</a><a href="/#faq">FAQ</a></div>
+      <div><b>Product</b><a href="/">Burst crackers</a><a href="/about">About</a><a href="/about#crackers">The 12 crackers</a><a href="/compare">Compare</a><a href="/about#faq">FAQ</a></div>
       <div><b>Build</b><a href="/docs">Docs</a><a href="/docs/mcp">MCP</a><a href="/docs/self-host">Self-host</a><a href="/llms.txt">llms.txt</a></div>
       <div><b>Open source</b><a href="${o.repo}" rel="noopener">GitHub repo</a><a href="${o.repo}/blob/main/LICENSE" rel="noopener">MIT license</a><a href="${o.repo}/blob/main/public/sounds/CREDITS.md" rel="noopener">Sound credits</a><a href="${o.repo}/issues" rel="noopener">Report a bug</a></div>
     </div>

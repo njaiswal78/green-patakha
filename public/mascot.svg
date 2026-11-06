@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="sb" viewBox="-10 0 240 240" role="img" aria-label="Sutli Bhai, a twine-wrapped sutli bomb with a mustache">
+<style>
+svg.sb .sb-p{display:none}
+svg.sb:not([data-pose]) .wave,svg.sb[data-pose=idle] .idle,svg.sb[data-pose=wave] .wave,svg.sb[data-pose=hyped] .hyped,svg.sb[data-pose=ears] .ears,svg.sb[data-pose=boom] .boom,svg.sb[data-pose=sleep] .sleep{display:inline}
+svg.sb .sb-me{animation:sb-bob 2.4s ease-in-out infinite}
+svg.sb[data-pose=hyped] .sb-me{animation:sb-hop .45s ease-in-out infinite}
+svg.sb[data-pose=ears] .sb-me,svg.sb[data-pose=boom] .sb-me{animation:sb-shake .12s linear infinite}
+svg.sb .sb-spark{transform-box:fill-box;transform-origin:center;animation:sb-fizz .18s steps(2) infinite}
+svg.sb .sb-waver{transform-origin:178px 140px;animation:sb-wave .7s ease-in-out infinite alternate}
+svg.sb .sb-z{animation:sb-float 2.4s ease-in-out infinite}
+svg.sb .sb-burst{transform-box:fill-box;transform-origin:center;animation:sb-pop .35s ease-out both}
+@keyframes sb-bob{50%{transform:translateY(4px)}}
+@keyframes sb-hop{50%{transform:translateY(-8px)}}
+@keyframes sb-shake{25%{transform:translate(-2px,1px)}75%{transform:translate(2px,-1px)}}
+@keyframes sb-fizz{50%{transform:scale(.7) rotate(20deg)}}
+@keyframes sb-wave{to{transform:rotate(-24deg)}}
+@keyframes sb-float{50%{transform:translateY(-6px);opacity:.6}}
+@keyframes sb-pop{from{transform:scale(.3);opacity:0}}
+@media (prefers-reduced-motion:reduce){svg.sb *{animation:none!important}}
+</style>
+<defs>
+  <radialGradient id="sb-g" cx=".38" cy=".32" r=".75">
+    <stop offset="0" stop-color="#e8b97f"/><stop offset=".55" stop-color="#b97f44"/><stop offset="1" stop-color="#6f421c"/>
+  </radialGradient>
+  <pattern id="sb-t1" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><path d="M0 0V16" stroke="#5c3a1a" stroke-width="3"/></pattern>
+  <pattern id="sb-t2" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><path d="M0 0V16" stroke="#5c3a1a" stroke-width="3"/></pattern>
+</defs>
+
+<polygon class="sb-p boom sb-burst" points="110,22 128,56 157,38 160,70 200,62 182,96 215,106 190,128 222,152 182,160 194,190 160,186 160,223 128,200 110,227 92,200 60,223 60,186 26,190 38,160 -2,152 30,128 5,106 38,96 20,62 60,70 63,38 92,56" fill="#ffd23f" stroke="#e4572e" stroke-width="5" stroke-linejoin="round"/>
+<ellipse cx="110" cy="228" rx="60" ry="8" fill="#000" opacity=".35"/>
+
+<g class="sb-me">
+  <ellipse cx="86" cy="214" rx="16" ry="8" fill="#4a2c14"/>
+  <ellipse cx="134" cy="214" rx="16" ry="8" fill="#4a2c14"/>
+
+  <path d="M110 70C108 52 122 46 126 30" fill="none" stroke="#2b1d10" stroke-width="5" stroke-linecap="round"/>
+  <g class="sb-p idle wave hyped ears sb-spark">
+    <polygon points="126,14 129,24 140,22 132,29 139,38 128,33 121,42 122,31 112,28 122,25" fill="#ffd23f"/>
+    <circle cx="126" cy="28" r="3.5" fill="#fff"/>
+  </g>
+
+  <circle cx="110" cy="140" r="72" fill="url(#sb-g)"/>
+  <circle cx="110" cy="140" r="72" fill="url(#sb-t1)" opacity=".45"/>
+  <circle cx="110" cy="140" r="72" fill="url(#sb-t2)" opacity=".45"/>
+  <circle cx="110" cy="140" r="72" fill="none" stroke="#3d2410" stroke-width="3"/>
+  <ellipse cx="110" cy="72" rx="17" ry="7" fill="#c0392b" stroke="#3d2410" stroke-width="2"/>
+
+  <g class="sb-p idle wave hyped boom">
+    <ellipse cx="88" cy="128" rx="14" ry="16" fill="#fff" stroke="#3d2410" stroke-width="2"/>
+    <ellipse cx="132" cy="128" rx="14" ry="16" fill="#fff" stroke="#3d2410" stroke-width="2"/>
+    <circle cx="90" cy="131" r="6.5" fill="#1b1209"/><circle cx="130" cy="131" r="6.5" fill="#1b1209"/>
+    <circle cx="92" cy="128" r="2" fill="#fff"/><circle cx="132" cy="128" r="2" fill="#fff"/>
+  </g>
+  <g class="sb-p ears" fill="none" stroke="#1b1209" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M80 120L96 128L80 136"/><path d="M140 120L124 128L140 136"/>
+  </g>
+  <g class="sb-p sleep" fill="none" stroke="#1b1209" stroke-width="4" stroke-linecap="round">
+    <path d="M76 130Q88 138 100 130"/><path d="M120 130Q132 138 144 130"/>
+  </g>
+
+  <g fill="none" stroke="#3b2412" stroke-width="6" stroke-linecap="round">
+    <g class="sb-p idle wave sleep"><path d="M72 106Q88 97 102 104"/><path d="M118 104Q132 97 148 106"/></g>
+    <g class="sb-p hyped boom"><path d="M72 98Q88 86 102 95"/><path d="M118 95Q132 86 148 98"/></g>
+    <g class="sb-p ears"><path d="M74 104Q88 108 102 113"/><path d="M118 113Q132 108 146 104"/></g>
+  </g>
+
+  <ellipse cx="110" cy="146" rx="7" ry="6" fill="#8a5428"/>
+  <path d="M110 152C98 146 84 146 76 154C70 160 62 158 60 150C60 162 74 170 88 164C98 160 104 158 110 158C116 158 122 160 132 164C146 170 160 162 160 150C158 158 150 160 144 154C136 146 122 146 110 152Z" fill="#2a170a"/>
+
+  <path class="sb-p idle" d="M98 168Q110 178 122 168" fill="none" stroke="#2a170a" stroke-width="4" stroke-linecap="round"/>
+  <path class="sb-p wave hyped" d="M94 166Q110 188 126 166Z" fill="#7a1d14" stroke="#2a170a" stroke-width="3" stroke-linejoin="round"/>
+  <ellipse class="sb-p boom" cx="110" cy="175" rx="9" ry="11" fill="#4a0f0a" stroke="#2a170a" stroke-width="3"/>
+  <path class="sb-p ears" d="M94 172q4-4 8 0t8 0t8 0t8 0" fill="none" stroke="#2a170a" stroke-width="3" stroke-linecap="round"/>
+  <path class="sb-p sleep" d="M104 170Q110 173 116 170" fill="none" stroke="#2a170a" stroke-width="3" stroke-linecap="round"/>
+
+  <g stroke-linecap="round" fill="none" stroke="#a86d36" stroke-width="12">
+    <g class="sb-p idle sleep wave"><path d="M42 150Q30 170 36 186"/></g>
+    <g class="sb-p idle sleep"><path d="M178 150Q190 170 184 186"/></g>
+    <g class="sb-p wave"><g class="sb-waver"><path d="M178 140Q200 118 196 94"/><circle cx="196" cy="88" r="9" fill="#c58a4f" stroke="#5c3a1a" stroke-width="2"/></g></g>
+    <g class="sb-p ears"><path d="M46 152Q26 146 38 126"/><path d="M174 152Q194 146 182 126"/></g>
+    <g class="sb-p hyped boom"><path d="M44 140Q22 116 28 90"/><path d="M176 140Q198 116 192 90"/></g>
+  </g>
+  <g fill="#c58a4f" stroke="#5c3a1a" stroke-width="2">
+    <g class="sb-p idle sleep wave"><circle cx="36" cy="190" r="9"/></g>
+    <g class="sb-p idle sleep"><circle cx="184" cy="190" r="9"/></g>
+    <g class="sb-p ears"><circle cx="40" cy="122" r="10"/><circle cx="180" cy="122" r="10"/></g>
+    <g class="sb-p hyped boom"><circle cx="28" cy="84" r="10"/><circle cx="192" cy="84" r="10"/></g>
+  </g>
+</g>
+
+<text class="sb-p boom" x="110" y="30" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="900" font-size="30" fill="#e4572e" stroke="#fff" stroke-width="2" paint-order="stroke">DHAMAKA!</text>
+<g class="sb-p sleep sb-z" fill="#cbd5ff" font-family="system-ui,sans-serif" font-weight="800">
+  <text x="150" y="78" font-size="16">z</text><text x="164" y="58" font-size="22">Z</text>
+</g>
+</svg>

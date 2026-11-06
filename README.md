@@ -4,7 +4,7 @@ Burst 12 Indian Diwali crackers in your browser, with real recorded sound, your 
 
 Phuljhadi, anar, chakri, bijli, sutli, hydrogen bomb, ladi, rocket, sky shot, saanp goli and more. Tap where you want it, pick the next one, turn the volume down when the baby is asleep.
 
-- Play: `/play` · Compare: `/compare` · Docs: `/docs` · MCP: `/mcp` · `llms.txt`
+- Play: `/` (also `/play`) · About: `/about` · Compare: `/compare` · Docs: `/docs` · MCP: `/mcp` · `llms.txt`
 
 ## Run it on your server
 

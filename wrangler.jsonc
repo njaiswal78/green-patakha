@@ -12,6 +12,7 @@
     "run_worker_first": [
       "/",
       "/play",
+      "/about",
       "/compare",
       "/docs",
       "/docs/*",

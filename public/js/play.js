@@ -75,7 +75,50 @@ document.addEventListener("visibilitychange", () => document.hidden && flush(tru
 // ---------- show ----------
 
 const show = new Show(canvas, sound, { bottomInset: tray.offsetHeight, onFire });
-new ResizeObserver(() => { show.bottomInset = tray.offsetHeight; }).observe(tray);
+const fitTray = () => {
+  show.bottomInset = tray.offsetHeight;
+  document.documentElement.style.setProperty("--tray", `${tray.offsetHeight}px`);
+};
+fitTray();
+new ResizeObserver(fitTray).observe(tray);
+
+// ---------- Sutli Bhai ----------
+
+const mascot = $("#mascot");
+const say = $("#say");
+let bhai = null;
+let poseTimer = 0;
+let sayTimer = 0;
+const restPose = () => (sound.muted ? "sleep" : autoTimer ? "hyped" : "idle");
+function pose(p, ms = 0, line = "") {
+  if (!bhai) return;
+  bhai.setAttribute("data-pose", p);
+  clearTimeout(poseTimer);
+  if (ms) poseTimer = setTimeout(() => bhai.setAttribute("data-pose", restPose()), ms);
+  if (line) {
+    say.textContent = line;
+    say.classList.add("on");
+    clearTimeout(sayTimer);
+    sayTimer = setTimeout(() => say.classList.remove("on"), 1800);
+  }
+}
+fetch("/mascot.svg")
+  .then((r) => (r.ok ? r.text() : Promise.reject()))
+  .then((svg) => {
+    mascot.insertAdjacentHTML("afterbegin", svg);
+    bhai = mascot.querySelector("svg");
+    if (autoTimer) pose("hyped", 0, "Mela shuru!");
+    else pose("wave", 2600, "Diwali mubarak! Chalo phodte hain.");
+  })
+  .catch(() => {});
+
+const playSample = sound.sample.bind(sound);
+sound.sample = (set, o = {}) => {
+  if (set === "boom" && !sound.muted) setTimeout(() => pose("boom", 1100, "Kya awaaz hai!"), (o.delay || 0) * 1000);
+  return playSample(set, o);
+};
+const isLoud = (id) => CRACKERS.find((c) => c.id === id)?.loudness === 3;
+const brace = (id) => isLoud(id) && !sound.muted && pose("ears", 3500, "Kaan band karo!");
 
 const gentleBtn = $("#gentle");
 const savedGentle = localStorage.getItem("gp.gentle");
@@ -123,14 +166,15 @@ CRACKERS.forEach((c, i) => {
   tray.append(b);
 });
 
-function select(id) {
+function select(id, quiet = false) {
+  if (!quiet && id !== selected && isLoud(id)) pose("hyped", 1400, "Ye wala? Kaan sambhal ke!");
   selected = id;
   localStorage.setItem("gp.sel", id);
   for (const b of tray.children) b.setAttribute("aria-checked", String(b.dataset.id === id));
   tray.querySelector(`[data-id="${id}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
   sound.unlock();
 }
-select(selected);
+select(selected, true);
 
 // ---------- firing ----------
 
@@ -151,7 +195,7 @@ canvas.addEventListener("pointerdown", (e) => {
     canvas.setPointerCapture(e.pointerId);
     return;
   }
-  show.fire(selected, x, y);
+  if (show.fire(selected, x, y)) brace(selected);
 });
 canvas.addEventListener("pointermove", (e) => {
   if (!drag) return;
@@ -185,9 +229,13 @@ function toggleAuto() {
     autoTick();
   }
   autoBtn.setAttribute("aria-pressed", String(!!autoTimer));
+  pose(restPose(), 0, autoTimer ? "Mela shuru!" : "");
 }
 autoBtn.addEventListener("click", toggleAuto);
-$("#sweep").addEventListener("click", () => show.sweep());
+$("#sweep").addEventListener("click", () => {
+  show.sweep();
+  pose("wave", 1500, "Safai bhi zaroori hai.");
+});
 
 // ---------- volume ----------
 
@@ -196,7 +244,12 @@ const volNum = $("#volnum");
 const muteBtn = $("#mute");
 const SPEAKER_ON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>';
 const SPEAKER_OFF = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+let wasMuted = sound.muted;
 sound.onChange((s) => {
+  if (s.muted !== wasMuted) {
+    wasMuted = s.muted;
+    pose(restPose(), 0, s.muted ? "Shhh… so raha hoon." : "Jaag gaya!");
+  }
   const v = Math.round(s.volume * 100);
   vol.value = String(v);
   volNum.textContent = s.muted ? "0" : String(v);
@@ -235,6 +288,7 @@ addEventListener("keydown", (e) => {
     sound.unlock();
     hint.classList.add("gone");
     fireRandom();
+    brace(selected);
   } else if (k === "m") {
     sound.unlock();
     sound.toggleMute();

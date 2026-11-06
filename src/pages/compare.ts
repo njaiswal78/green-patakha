@@ -44,7 +44,7 @@ ${body}
     <p><b>OXAAM</b> is a timing game with a score and combos. If you want a challenge, that's the one.</p>
     <h2 style="margin-top:36px">Versus real crackers</h2>
     <p>The legal limit for a single cracker in India is 125 dB(AI) at 4 metres (<a href="${SRC.noiseRule.url}" rel="noopener">source</a>). In Delhi-NCR for Diwali 2025, green crackers were allowed 6–7 am and 8–10 pm on two days, and laris could not be made or sold (<a href="${SRC.scOrder.url}" rel="noopener">Supreme Court, 15 October 2025</a>). Green Patakha has no smoke, no time window and a volume knob. It doesn't replace the smell of the real thing, and it doesn't try to.</p>
-    <p style="margin-top:28px"><a class="btn big" href="/play">Start bursting</a> <a class="btn big ghost" href="/#pricing">See price: ₹0</a></p>
+    <p style="margin-top:28px"><a class="btn big" href="/play">Start bursting</a> <a class="btn big ghost" href="/about#pricing">See price: ₹0</a></p>
   </div>
 </section>`;
 

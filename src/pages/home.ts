@@ -61,6 +61,7 @@ export function homePage(origin: string, repo: string) {
   const body = `
 <section class="hero">
   <div class="wrap">
+    <img src="/mascot.svg" alt="Sutli Bhai, the Green Patakha mascot, waving" width="140" height="140">
     <p class="eyebrow">Diwali 2026 · Sunday, 8 November</p>
     <h1>Burst 12 Indian patakhe with real sound.<br>0 grams of smoke.</h1>
     <p class="lead">Pick a phuljhadi, anar, sutli bomb or 1000 wala ladi and tap the street. The bangs are real recordings, not synthesised beeps, and you set the volume. Free, no login, open source.</p>
@@ -255,7 +256,7 @@ ${faq}
     title: "Green Patakha: burst Indian Diwali crackers online with real sound, zero smoke",
     description:
       "Free virtual Diwali crackers: phuljhadi, anar, chakri, sutli bomb, 1000 wala ladi, rockets and more. Real recorded sound, your own volume, no login. Open source.",
-    path: "/",
+    path: "/about",
     body,
     origin,
     repo,

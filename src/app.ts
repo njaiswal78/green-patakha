@@ -76,14 +76,16 @@ export function createApp(platform: (c: C) => Platform) {
   });
 
   // ---------- pages ----------
-  app.get("/", (c) => html(c, homePage(c.var.p.origin, c.var.p.repo)));
-  app.get("/play", async (c) => {
-    const res = await c.var.p.fallback(c.req.raw);
+  const game = async (c: C) => {
+    const res = await c.var.p.fallback(new Request(new URL("/play", c.req.url), c.req.raw));
     if (!res.ok) return res;
     // Share previews need an absolute og:image; play.html stays plain static for any host.
     const body = (await res.text()).replace('content="/og.png"', `content="${c.var.p.origin}/og.png"`);
     return c.html(body);
-  });
+  };
+  app.get("/", game);
+  app.get("/play", game);
+  app.get("/about", (c) => html(c, homePage(c.var.p.origin, c.var.p.repo)));
   app.get("/compare", (c) => html(c, comparePage(c.var.p.origin, c.var.p.repo)));
   app.get("/docs", (c) => html(c, docsHome(c.var.p.origin, c.var.p.repo)));
   app.get("/docs/mcp", (c) => html(c, docsMcp(c.var.p.origin, c.var.p.repo)));
@@ -97,7 +99,7 @@ export function createApp(platform: (c: C) => Platform) {
   });
   app.get("/sitemap.xml", (c) => {
     const o = c.var.p.origin;
-    const urls = ["/", "/play", "/compare", "/docs", "/docs/mcp", "/docs/self-host"]
+    const urls = ["/", "/about", "/compare", "/docs", "/docs/mcp", "/docs/self-host"]
       .map((u) => `<url><loc>${o}${u}</loc></url>`)
       .join("");
     return text(c, `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`, "application/xml");

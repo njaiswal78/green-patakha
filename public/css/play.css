@@ -132,7 +132,37 @@ html, body {
 .loud i { width: 9px; height: 3px; border-radius: 2px; background: #ffffff26; }
 .loud i.on { background: #f97316; }
 
+.mascot {
+  position: fixed;
+  left: 10px;
+  bottom: calc(var(--tray, 100px) + 4px);
+  width: 140px;
+  pointer-events: none;
+}
+.mascot svg { display: block; width: 100%; height: auto; }
+.say {
+  position: absolute;
+  left: 92%;
+  top: 6px;
+  margin: 0;
+  width: max-content;
+  max-width: 200px;
+  padding: 7px 11px;
+  background: #fff8e8;
+  color: #2a170a;
+  border-radius: 14px 14px 14px 4px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 14px #0006;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .2s, transform .2s;
+}
+.say.on { opacity: 1; transform: none; }
+
 @media (max-width: 720px) {
+  .mascot { width: 84px; }
+  .say { font-size: 12px; max-width: 150px; }
   .count { order: 3; width: 100%; font-size: 12px; }
   .ctrls { gap: 6px; }
   .ctrls button { padding: 6px 9px; font-size: 12px; }
