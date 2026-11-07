@@ -382,7 +382,13 @@ nudge.addEventListener("click", openWishBox);
 function nudgeWish() {
   if (!vidReady.hidden || !$("#soundtap").hidden || wishBox.open) return;
   nudge.hidden = false;
-  setTimeout(() => (nudge.hidden = true), 9000);
+  const hide = (e) => {
+    if (e?.target === nudge) return;
+    nudge.hidden = true;
+    removeEventListener("pointerdown", hide, true);
+  };
+  addEventListener("pointerdown", hide, true);
+  setTimeout(hide, 9000);
 }
 wishBox.addEventListener("close", () => {
   const w = cleanWish(wishInput.value);
