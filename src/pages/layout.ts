@@ -64,7 +64,7 @@ ${o.body}
     <div class="cols">
       <div><b>Product</b><a href="/">Burst crackers</a><a href="/about">About</a><a href="/about#crackers">The 15 crackers</a><a href="/compare">Compare</a><a href="/about#faq">FAQ</a></div>
       <div><b>Build</b><a href="/docs">Docs</a><a href="/docs/mcp">MCP</a><a href="/docs/self-host">Self-host</a><a href="/llms.txt">llms.txt</a></div>
-      <div><b>Open source</b><a href="${o.repo}" rel="noopener">GitHub repo</a><a href="${o.repo}/blob/main/LICENSE" rel="noopener">MIT license</a><a href="${o.repo}/blob/main/public/sounds/CREDITS.md" rel="noopener">Sound credits</a><a href="${o.repo}/blob/main/public/photos/CREDITS.md" rel="noopener">Photo credits</a><a href="${o.repo}/issues" rel="noopener">Report a bug</a></div>
+      <div><b>Open source</b><a href="${o.repo}" rel="noopener">GitHub repo</a><a href="${o.repo}/blob/main/LICENSE" rel="noopener">MIT license</a><a href="${o.repo}/blob/main/public/sounds/CREDITS.md" rel="noopener">Sound credits</a><a href="${o.repo}/issues" rel="noopener">Report a bug</a></div>
     </div>
   </div>
   <div class="wrap copy">

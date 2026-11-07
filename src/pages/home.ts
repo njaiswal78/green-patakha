@@ -43,12 +43,12 @@ const FAQ: [string, string][] = [
 
 export function homePage(origin: string, repo: string) {
   const tray = CRACKERS.slice(0, 11)
-    .map((c) => `<a href="/play"><img src="/photos/${c.id}.jpg" alt="" width="40" height="40"><b>${c.hindi}</b>${esc(c.name)}</a>`)
+    .map((c) => `<a href="/play"><img src="/crackers/${c.id}.svg" alt="" width="40" height="40"><b>${c.hindi}</b>${esc(c.name)}</a>`)
     .join("");
 
   const cards = CRACKERS.map(
     (c) => `<a class="cracker" href="/play">
-  <div class="img"><img src="/photos/${c.id}.jpg" alt="${esc(c.name)} (${esc(c.english)})" width="120" height="120" loading="lazy"></div>
+  <div class="img"><img src="/crackers/${c.id}.svg" alt="${esc(c.name)} (${esc(c.english)})" width="120" height="120" loading="lazy"></div>
   <span class="hi">${c.hindi}</span>
   <span>${esc(c.name)}</span>
   <span class="en">${esc(c.english)}</span>

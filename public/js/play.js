@@ -142,7 +142,7 @@ CRACKERS.forEach((c, i) => {
   b.setAttribute("role", "radio");
   b.title = `${c.name} (${c.english}). ${LOUDNESS_LABEL[c.loudness]}. ${c.about}`;
   const img = document.createElement("img");
-  img.src = `/photos/${c.id}.jpg`;
+  img.src = `/crackers/${c.id}.svg`;
   img.alt = "";
   img.width = 52;
   img.height = 52;

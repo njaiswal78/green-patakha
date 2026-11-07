@@ -50,7 +50,7 @@ Everything on `/play` is static files in `public/`. Any static host can serve th
 
 Sound clips are cut from CC0 and public-domain field recordings on Wikimedia Commons. See [public/sounds/CREDITS.md](public/sounds/CREDITS.md). `scripts/cut-sounds.py` rebuilds them from the originals.
 
-Cracker photos in the tray and on `/about` come from Wikimedia Commons under their own licenses (CC0, PD, CC BY, CC BY-SA), not MIT. See [public/photos/CREDITS.md](public/photos/CREDITS.md).
+Cracker illustrations in `public/crackers/` are original SVGs, MIT like the code.
 
 ## License
 
