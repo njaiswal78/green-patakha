@@ -204,9 +204,11 @@ html, body {
 @keyframes bomb-in { from { transform: translateY(40px) scale(.6); opacity: 0; } }
 @keyframes rock { 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
 @keyframes fizz { 50% { transform: scale(.65) rotate(30deg); opacity: .8; } }
-.wishbox { border: 1px solid #ffffff26; border-radius: 18px; background: #0d0f1f; color: #f5f1e8; padding: 22px; width: min(420px, 92vw); }
+.wishbox { border: 1px solid #ffffff26; border-radius: 18px; background: #0d0f1f; color: #f5f1e8; padding: 0; width: min(420px, 92vw); }
 .wishbox::backdrop { background: #05060fcc; }
-.wishbox form { display: grid; gap: 12px; }
+.wishbox form { display: grid; gap: 12px; padding: 22px; position: relative; }
+.wishbox label { padding-right: 36px; }
+.wishx { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: #ffffff14; color: inherit; font-size: 24px; line-height: 1; cursor: pointer; }
 .wishbox label { font-weight: 800; font-size: 18px; }
 .wishbox input { font: inherit; font-size: 18px; padding: 12px 14px; border-radius: 12px; border: 1px solid #ffffff33; background: #ffffff10; color: inherit; }
 .wishrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }

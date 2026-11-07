@@ -373,6 +373,11 @@ function openWishBox() {
   syncWa();
   wishBox.showModal();
 }
+// The dialog has no padding of its own, so a target of the dialog itself means the backdrop. The press must start there
+// too, or a text selection dragged out of the input would close the box and lose the wish.
+let downOnBackdrop = false;
+wishBox.addEventListener("pointerdown", (e) => (downOnBackdrop = e.target === wishBox));
+wishBox.addEventListener("click", (e) => downOnBackdrop && e.target === wishBox && wishBox.close("cancel"));
 $("#wishbtn").addEventListener("click", openWishBox);
 // The intro's own click handler enters the game as this click bubbles; the box opens on top.
 $("#introwish").addEventListener("click", openWishBox);
